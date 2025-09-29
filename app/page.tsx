@@ -11,7 +11,12 @@ export default function Home() {
           <span className="hidden group-focus-within:block">
             Check if email is vaild
           </span>
-          <button type="Submit">Submit</button>
+          <button
+            type="Submit"
+            className="text-avocado-400 h-[30px] rounded-[20px] bg-[#543cb8]"
+          >
+            Submit
+          </button>
         </div>
       </div>
     </main>
