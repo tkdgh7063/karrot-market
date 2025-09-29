@@ -8,3 +8,21 @@
   --color-avocado-600: oklch(0.53 0.12 118.34);
   --spacing-tomato: 120px;
 }
+
+@layer base {
+  a {
+    @apply text-blue-500;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply text-avocado-400 h-[30px] rounded-[20px] bg-[#543cb8];
+  }
+}
+
+@layer utilities {
+  .text-bigger-size {
+    @apply text-3xl font-semibold;
+  }
+}
