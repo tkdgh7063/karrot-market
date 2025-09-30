@@ -7,6 +7,5 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  console.log("POST ACTION!!");
   return NextResponse.json(data);
 }
