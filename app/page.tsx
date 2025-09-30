@@ -11,7 +11,7 @@ export default function Home() {
       <div className="flex w-full flex-col items-center gap-1">
         <Link
           href="/create-account"
-          className="w-[80%] rounded-lg bg-orange-500 py-2.5 text-center text-lg text-white transition-colors hover:bg-orange-400"
+          className="primary-btn w-[80%] py-2.5 text-lg"
         >
           Get Started
         </Link>
