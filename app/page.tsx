@@ -15,7 +15,7 @@ export default function Home() {
         >
           Get Started
         </Link>
-        <div className="flex gap-2">
+        <div className="flex items-center justify-center gap-2">
           <span>Already have an account?</span>
           <Link href="/login" className="underline-offset-4 hover:underline">
             Login

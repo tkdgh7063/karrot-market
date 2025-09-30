@@ -1,6 +1,7 @@
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
 import SocialLogin from "@/components/social-login";
+import Link from "next/link";
 
 export default function CreateAccount() {
   return (
@@ -25,6 +26,12 @@ export default function CreateAccount() {
         />
         <FormInput type="text" placeholder="Username" errors={[]} required />
         <FormButton text="Create Account" loading={false} />
+        <div className="flex items-center justify-center gap-2">
+          <span>Already have an account?</span>
+          <Link href="/login" className="underline-offset-4 hover:underline">
+            Login
+          </Link>
+        </div>
       </form>
       <SocialLogin />
     </div>
