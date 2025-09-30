@@ -23,7 +23,7 @@ export default function SocialLogin() {
             <svg
               stroke="currentColor"
               fill="currentColor"
-              stroke-width="0"
+              strokeWidth="0"
               viewBox="0 0 496 512"
               xmlns="http://www.w3.org/2000/svg"
               className="size-6"
