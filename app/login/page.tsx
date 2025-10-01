@@ -29,7 +29,7 @@ export default function Login() {
           errors={[]}
           required
         />
-        <FormButton text="Login" loading={false} />
+        <FormButton text="Login" />
         <div className="flex gap-1 self-center">
           <span>Don’t have an account?</span>
           <Link
