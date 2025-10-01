@@ -1,20 +1,21 @@
+"use client";
+
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
 import SocialLogin from "@/components/social-login";
 import Link from "next/link";
+import { useActionState } from "react";
+import { handleForm } from "./actions";
 
 export default function Login() {
-  const handleForm = async (formData: FormData) => {
-    "use server";
-    console.log(formData.get("email"), formData.get("password"));
-  };
+  const [state, action] = useActionState(handleForm, null);
   return (
     <div className="flex flex-col gap-10 px-6 py-8">
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">Hello!</h1>
         <h2 className="text-xl">Login with Email</h2>
       </div>
-      <form className="flex flex-col gap-3" action={handleForm}>
+      <form className="flex flex-col gap-3" action={action}>
         <FormInput
           type="email"
           placeholder="Email"
@@ -26,7 +27,7 @@ export default function Login() {
           type="password"
           placeholder="Password"
           name="password"
-          errors={[]}
+          errors={state?.errors ?? []}
           required
         />
         <FormButton text="Login" />
