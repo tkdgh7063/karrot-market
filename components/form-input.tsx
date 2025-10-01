@@ -4,6 +4,7 @@ interface FormInputProps {
   type: React.InputHTMLAttributes<HTMLInputElement>["type"];
   placeholder: string;
   required: boolean;
+  name: string;
   errors: string[];
 }
 
@@ -11,6 +12,7 @@ export default function FormInput({
   type,
   placeholder,
   required,
+  name,
   errors,
 }: FormInputProps) {
   return (
@@ -19,6 +21,7 @@ export default function FormInput({
         className="h-10 w-full rounded-md border-none bg-transparent ring-1 ring-neutral-200 transition placeholder:text-neutral-300 focus:ring-3 focus:ring-orange-500 focus:outline-none"
         type={type}
         placeholder={placeholder}
+        name={name}
         required={required}
       />
       {errors.map((error, index) => (
