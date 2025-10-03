@@ -23,6 +23,7 @@ export default function FormInput({
         placeholder={placeholder}
         name={name}
         required={required}
+        autoComplete="off"
       />
       {errors.map((error, index) => (
         <span key={index} className="font-medium text-red-500">
