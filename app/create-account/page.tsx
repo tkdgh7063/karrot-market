@@ -11,21 +11,35 @@ export default function CreateAccount() {
         <h2 className="text-xl">Fill in the form below to join!</h2>
       </div>
       <form className="flex flex-col gap-3">
-        <FormInput type="email" placeholder="Email" errors={[]} required />
+        <FormInput
+          type="email"
+          placeholder="Email"
+          name="email"
+          errors={[]}
+          required
+        />
         <FormInput
           type="password"
           placeholder="Password"
+          name="password1"
           errors={[]}
           required
         />
         <FormInput
           type="password"
           placeholder="Confirm Password"
+          name="password2"
           errors={[]}
           required
         />
-        <FormInput type="text" placeholder="Username" errors={[]} required />
-        <FormButton text="Create Account" loading={false} />
+        <FormInput
+          type="text"
+          placeholder="Username"
+          name="username"
+          errors={[]}
+          required
+        />
+        <FormButton text="Create Account" />
         <div className="flex items-center justify-center gap-2">
           <span>Already have an account?</span>
           <Link href="/login" className="underline-offset-4 hover:underline">
