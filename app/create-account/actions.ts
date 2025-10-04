@@ -2,12 +2,38 @@
 
 import { z } from "zod";
 
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  confirm_password: z.string().min(8),
-  username: z.string().min(3).max(15),
-});
+function checkUsername(username: string): boolean {
+  return !username.includes("admin");
+}
+
+function checkPassword(password: string, confirm_password: string): boolean {
+  return password === confirm_password;
+}
+
+const formSchema = z
+  .object({
+    email: z.email("Please enter a valid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirm_password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long"),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters long")
+      .max(15, "Username must be less than 15 characters")
+      .refine(
+        (username) => checkUsername(username),
+        "Username cannot contain 'admin'",
+      ),
+  })
+  .refine(
+    ({ password, confirm_password }) =>
+      checkPassword(password, confirm_password),
+    {
+      path: ["confirm_password"],
+      error: "Password confirmation does not match",
+    },
+  );
 
 export async function createAccount(prevState: any, formData: FormData) {
   const data = {
