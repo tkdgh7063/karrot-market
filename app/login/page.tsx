@@ -3,6 +3,7 @@
 import Button from "@/components/button";
 import Input from "@/components/input";
 import SocialLogin from "@/components/social-login";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/constants";
 import Link from "next/link";
 import { useActionState } from "react";
 import { handleForm } from "./actions";
@@ -21,8 +22,8 @@ export default function Login() {
           type="password"
           placeholder="Password"
           name="password"
-          minLength={8}
-          maxLength={20}
+          minLength={PASSWORD_MIN_LENGTH}
+          maxLength={PASSWORD_MAX_LENGTH}
           required
         />
         <Button text="Login" />

@@ -1,5 +1,12 @@
 "use server";
 
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_REGEXP,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from "@/lib/constants";
 import { z } from "zod";
 
 function checkUsername(username: string): boolean {
@@ -9,10 +16,6 @@ function checkUsername(username: string): boolean {
 function checkPassword(password: string, confirm_password: string): boolean {
   return password === confirm_password;
 }
-
-const passwordRegexp = new RegExp(
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#?!@$%^&*-])(?!.*\s).+$/,
-);
 
 const formSchema = z
   .object({
@@ -26,10 +29,10 @@ const formSchema = z
       .toLowerCase(),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters long")
-      .max(20, "Password must be less than 20 characters")
+      .min(PASSWORD_MIN_LENGTH, "Password must be at least 8 characters long")
+      .max(PASSWORD_MAX_LENGTH, "Password must be less than 20 characters")
       .regex(
-        passwordRegexp,
+        PASSWORD_REGEXP,
         "Password must have uppercase, lowercase, number, special character, and no spaces.",
       ),
     confirm_password: z.string(),
@@ -40,8 +43,8 @@ const formSchema = z
           return "Please enter a valid username";
         },
       })
-      .min(3, "Username must be at least 3 characters long")
-      .max(15, "Username must be less than 15 characters")
+      .min(USERNAME_MIN_LENGTH, "Username must be at least 3 characters long")
+      .max(USERNAME_MAX_LENGTH, "Username must be less than 15 characters")
       .toLowerCase()
       .trim()
       .refine(
