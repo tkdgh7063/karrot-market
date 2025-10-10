@@ -12,7 +12,7 @@ const formSchema = z.object({
     .max(20, ERROR_MESSAGES.PASSWORD_WRONG),
 });
 
-export async function login(prevData: any, formData: FormData) {
+export async function login(_: any, formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),

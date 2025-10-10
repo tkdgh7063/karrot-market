@@ -61,7 +61,7 @@ const formSchema = z
     },
   );
 
-export async function createAccount(prevState: any, formData: FormData) {
+export async function createAccount(_: any, formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
