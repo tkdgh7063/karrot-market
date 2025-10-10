@@ -6,6 +6,7 @@ import {
   PASSWORD_REGEXP,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
+  ERROR_MESSAGES,
 } from "@/lib/constants";
 import { z } from "zod";
 
@@ -22,34 +23,33 @@ const formSchema = z
     email: z
       .email({
         error: (issue) => {
-          if (issue.input === undefined) return "Email is required";
-          return "Please enter a valid email address";
+          if (issue.input === undefined) return ERROR_MESSAGES.EMAIL_REQUIRED;
+          return ERROR_MESSAGES.EMAIL_INVALID;
         },
       })
       .toLowerCase(),
     password: z
       .string()
-      .min(PASSWORD_MIN_LENGTH, "Password must be at least 8 characters long")
-      .max(PASSWORD_MAX_LENGTH, "Password must be less than 20 characters")
-      .regex(
-        PASSWORD_REGEXP,
-        "Password must have uppercase, lowercase, number, special character, and no spaces.",
-      ),
+      .nonempty(ERROR_MESSAGES.PASSWORD_REQUIRED)
+      .min(PASSWORD_MIN_LENGTH, ERROR_MESSAGES.PASSWORD_TOO_SHORT)
+      .max(PASSWORD_MAX_LENGTH, ERROR_MESSAGES.PASSWORD_TOO_LONG)
+      .regex(PASSWORD_REGEXP, ERROR_MESSAGES.PASSWORD_COMPLEXITY),
     confirm_password: z.string(),
     username: z
       .string({
         error: (issue) => {
-          if (issue.input === undefined) return "Username is required";
-          return "Please enter a valid username";
+          if (issue.input === undefined)
+            return ERROR_MESSAGES.USERNAME_REQUIRED;
+          return ERROR_MESSAGES.USERNAME_INVALID;
         },
       })
-      .min(USERNAME_MIN_LENGTH, "Username must be at least 3 characters long")
-      .max(USERNAME_MAX_LENGTH, "Username must be less than 15 characters")
+      .min(USERNAME_MIN_LENGTH, ERROR_MESSAGES.USERNAME_TOO_SHORT)
+      .max(USERNAME_MAX_LENGTH, ERROR_MESSAGES.USERNAME_TOO_LONG)
       .toLowerCase()
       .trim()
       .refine(
         (username) => checkUsername(username),
-        "Username cannot contain 'admin'",
+        ERROR_MESSAGES.USERNAME_CANNOT_CONTAIN_ADMIN,
       ),
   })
   .refine(
@@ -57,7 +57,7 @@ const formSchema = z
       checkPassword(password, confirm_password),
     {
       path: ["confirm_password"],
-      error: "Password confirmation does not match",
+      error: ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH,
     },
   );
 
