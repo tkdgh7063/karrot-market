@@ -21,4 +21,6 @@ export const ERROR_MESSAGES = {
   USERNAME_TOO_SHORT: "Username must be at least 3 characters long",
   USERNAME_TOO_LONG: "Username must be less than 15 characters",
   USERNAME_CANNOT_CONTAIN_ADMIN: "Username cannot contain 'admin'",
+  PHONE_INVALID_FORMAT: "Please enter a valid phone number",
+  PHONE_INVALID_LOCALE: "Only Korean phone numbers are allowed",
 };
