@@ -16,7 +16,14 @@ const passwordRegexp = new RegExp(
 
 const formSchema = z
   .object({
-    email: z.email("Please enter a valid email address").toLowerCase(),
+    email: z
+      .email({
+        error: (issue) => {
+          if (issue.input === undefined) return "Email is required";
+          return "Please enter a valid email address";
+        },
+      })
+      .toLowerCase(),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters long")
@@ -27,7 +34,12 @@ const formSchema = z
       ),
     confirm_password: z.string(),
     username: z
-      .string()
+      .string({
+        error: (issue) => {
+          if (issue.input === undefined) return "Username is required";
+          return "Please enter a valid username";
+        },
+      })
       .min(3, "Username must be at least 3 characters long")
       .max(15, "Username must be less than 15 characters")
       .toLowerCase()
