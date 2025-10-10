@@ -15,6 +15,7 @@ export const ERROR_MESSAGES = {
   PASSWORD_TOO_SHORT: "Password must be at least 8 characters long",
   PASSWORD_TOO_LONG: "Password must be less than 20 characters",
   PASSWORDS_DO_NOT_MATCH: "Password confirmation does not match",
+  PASSWORD_WRONG: "Wrong Password",
   USERNAME_REQUIRED: "Username is required",
   USERNAME_INVALID: "Please enter a valid username",
   USERNAME_TOO_SHORT: "Username must be at least 3 characters long",
