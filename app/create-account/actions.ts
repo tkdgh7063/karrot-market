@@ -25,9 +25,7 @@ const formSchema = z
         passwordRegexp,
         "Password must have uppercase, lowercase, number, special character, and no spaces.",
       ),
-    confirm_password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long"),
+    confirm_password: z.string(),
     username: z
       .string()
       .min(3, "Username must be at least 3 characters long")
