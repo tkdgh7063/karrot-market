@@ -12,6 +12,9 @@ import {
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 function checkUsername(username: string): boolean {
   return !username.includes("admin");
@@ -120,6 +123,15 @@ export async function createAccount(_: any, formData: FormData) {
     });
 
     // log the user in
-    // redirect "/home"
+    const session = await getIronSession(await cookies(), {
+      cookieName: "user-info",
+      password: process.env.COOKIE_PASSWORD!,
+    });
+    //@ts-ignore
+    session.id = user.id;
+    await session.save();
+
+    // redirect user
+    redirect("/profile");
   }
 }
