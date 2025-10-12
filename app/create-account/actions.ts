@@ -7,9 +7,11 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
   ERROR_MESSAGES,
+  HASH_ROUNDS,
 } from "@/lib/constants";
 import db from "@/lib/db";
 import { z } from "zod";
+import bcrypt from "bcrypt";
 
 function checkUsername(username: string): boolean {
   return !username.includes("admin");
@@ -103,7 +105,20 @@ export async function createAccount(_: any, formData: FormData) {
     return z.flattenError(result.error);
   } else {
     // hash password
+    const hasedPassword = await bcrypt.hash(result.data.password, HASH_ROUNDS);
+
     // save the user to db
+    const user = await db.user.create({
+      data: {
+        email: result.data.email,
+        username: result.data.username,
+        password: hasedPassword,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     // log the user in
     // redirect "/home"
   }
