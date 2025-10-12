@@ -16,5 +16,4 @@ async function test() {
   console.log(code);
 }
 
-test();
 export default db;

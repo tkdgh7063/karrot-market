@@ -8,6 +8,7 @@ import {
   USERNAME_MIN_LENGTH,
   ERROR_MESSAGES,
 } from "@/lib/constants";
+import db from "@/lib/db";
 import { z } from "zod";
 
 function checkUsername(username: string): boolean {
@@ -18,6 +19,32 @@ function checkPassword(password: string, confirm_password: string): boolean {
   return password === confirm_password;
 }
 
+const isEmailAvailable = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !Boolean(user);
+};
+
+const isUsernameAvailable = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !Boolean(user);
+};
+
 const formSchema = z
   .object({
     email: z
@@ -27,13 +54,14 @@ const formSchema = z
           return ERROR_MESSAGES.EMAIL_INVALID;
         },
       })
-      .toLowerCase(),
+      .toLowerCase()
+      .refine(isEmailAvailable, ERROR_MESSAGES.EMAIL_TAKEN),
     password: z
       .string()
       .nonempty(ERROR_MESSAGES.PASSWORD_REQUIRED)
       .min(PASSWORD_MIN_LENGTH, ERROR_MESSAGES.PASSWORD_TOO_SHORT)
-      .max(PASSWORD_MAX_LENGTH, ERROR_MESSAGES.PASSWORD_TOO_LONG)
-      .regex(PASSWORD_REGEXP, ERROR_MESSAGES.PASSWORD_COMPLEXITY),
+      .max(PASSWORD_MAX_LENGTH, ERROR_MESSAGES.PASSWORD_TOO_LONG),
+    //.regex(PASSWORD_REGEXP, ERROR_MESSAGES.PASSWORD_COMPLEXITY),
     confirm_password: z.string(),
     username: z
       .string({
@@ -50,7 +78,8 @@ const formSchema = z
       .refine(
         (username) => checkUsername(username),
         ERROR_MESSAGES.USERNAME_CANNOT_CONTAIN_ADMIN,
-      ),
+      )
+      .refine(isUsernameAvailable, ERROR_MESSAGES.USERNAME_TAKEN),
   })
   .refine(
     ({ password, confirm_password }) =>
@@ -69,10 +98,13 @@ export async function createAccount(_: any, formData: FormData) {
     username: formData.get("username"),
   };
 
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.spa(data); // spa stands for safeParseAsync
   if (!result.success) {
     return z.flattenError(result.error);
   } else {
-    return;
+    // hash password
+    // save the user to db
+    // log the user in
+    // redirect "/home"
   }
 }
