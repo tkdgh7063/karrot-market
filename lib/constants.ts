@@ -10,6 +10,7 @@ export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "Email is required",
   EMAIL_INVALID: "Please enter a valid email address",
   EMAIL_TAKEN: "This email is already registered",
+  EMAIL_NOT_REGISTERED: "This email is not registered",
   PASSWORD_REQUIRED: "Password is required",
   PASSWORD_COMPLEXITY:
     "Password must have uppercase, lowercase, number, special character, and no spaces.",
