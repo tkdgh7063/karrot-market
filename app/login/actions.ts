@@ -61,6 +61,7 @@ export async function login(_: any, formData: FormData) {
     if (match) {
       const session = await getSession();
       session.id = user!.id;
+      await session.save();
 
       // redirect user
       redirect("/profile");
