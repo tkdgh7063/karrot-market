@@ -2,11 +2,10 @@
 
 import { ERROR_MESSAGES } from "@/lib/constants";
 import db from "@/lib/db";
-import { User } from "@/lib/generated/prisma";
-import z from "zod";
-import bcrypt from "bcrypt";
 import getSession from "@/lib/session";
+import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
+import z from "zod";
 
 const isEmailRegistered = async (email: string) => {
   const user = db.user.findUnique({

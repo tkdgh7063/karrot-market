@@ -23,32 +23,6 @@ function checkPassword(password: string, confirm_password: string): boolean {
   return password === confirm_password;
 }
 
-const isEmailAvailable = async (email: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  return !Boolean(user);
-};
-
-const isUsernameAvailable = async (username: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      username,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  return !Boolean(user);
-};
-
 const formSchema = z
   .object({
     email: z
@@ -58,8 +32,7 @@ const formSchema = z
           return ERROR_MESSAGES.EMAIL_INVALID;
         },
       })
-      .toLowerCase()
-      .refine(isEmailAvailable, ERROR_MESSAGES.EMAIL_TAKEN),
+      .toLowerCase(),
     password: z
       .string()
       .nonempty(ERROR_MESSAGES.PASSWORD_REQUIRED)
@@ -82,19 +55,60 @@ const formSchema = z
       .refine(
         (username) => checkUsername(username),
         ERROR_MESSAGES.USERNAME_CANNOT_CONTAIN_ADMIN,
-      )
-      .refine(isUsernameAvailable, ERROR_MESSAGES.USERNAME_TAKEN),
+      ),
   })
-  .refine(
-    ({ password, confirm_password }) =>
-      checkPassword(password, confirm_password),
-    {
-      path: ["confirm_password"],
-      error: ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH,
-    },
-  );
+  .superRefine(async ({ email, password, confirm_password, username }, ctx) => {
+    const emailExists = await db.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (emailExists) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["email"],
+        message: ERROR_MESSAGES.EMAIL_TAKEN,
+        continue: false,
+      });
+      return z.NEVER;
+    }
+
+    if (!checkPassword(password, confirm_password)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirm_password"],
+        message: ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH,
+        continue: false,
+      });
+      return z.NEVER;
+    }
+
+    const usernameExists = await db.user.findUnique({
+      where: {
+        username: username,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (usernameExists) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["username"],
+        message: ERROR_MESSAGES.USERNAME_TAKEN,
+        continue: false,
+      });
+      return z.NEVER;
+    }
+  });
 
 export async function createAccount(_: any, formData: FormData) {
+  const __ = typeof PASSWORD_REGEXP; // assigned to keep the import
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
