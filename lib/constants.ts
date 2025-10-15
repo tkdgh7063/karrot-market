@@ -11,6 +11,7 @@ export const ERROR_MESSAGES = {
   EMAIL_INVALID: "Please enter a valid email address",
   EMAIL_TAKEN: "This email is already registered",
   EMAIL_NOT_REGISTERED: "This email is not registered",
+
   PASSWORD_REQUIRED: "Password is required",
   PASSWORD_COMPLEXITY:
     "Password must have uppercase, lowercase, number, special character, and no spaces.",
@@ -18,12 +19,14 @@ export const ERROR_MESSAGES = {
   PASSWORD_TOO_LONG: "Password must be less than 20 characters",
   PASSWORDS_DO_NOT_MATCH: "Password confirmation does not match",
   PASSWORD_WRONG: "Wrong Password",
+
   USERNAME_REQUIRED: "Username is required",
   USERNAME_INVALID: "Please enter a valid username",
   USERNAME_TOO_SHORT: "Username must be at least 3 characters long",
   USERNAME_TOO_LONG: "Username must be less than 15 characters",
   USERNAME_CANNOT_CONTAIN_ADMIN: "Username cannot contain 'admin'",
   USERNAME_TAKEN: "This username is already taken",
+
   PHONE_INVALID_FORMAT: "Please enter a valid phone number",
   PHONE_INVALID_LOCALE: "Only Korean phone numbers are allowed",
 };
