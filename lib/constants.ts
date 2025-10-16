@@ -32,3 +32,5 @@ export const ERROR_MESSAGES = {
 };
 
 export const HASH_ROUNDS = 12;
+
+export const BASE_PHOTO = "/goguma.jpg";
