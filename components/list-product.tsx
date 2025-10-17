@@ -26,6 +26,7 @@ export default function ListProduct({
           alt={title}
           fill
           className="object-cover"
+          // sizes="30"
         />
       </div>
       <div className="flex flex-col gap-1 *:text-white">

@@ -41,3 +41,5 @@ export const HOUR = 1000 * 60 * 60;
 export const DAY = 1000 * 60 * 60 * 24;
 export const MONTH = 1000 * 60 * 60 * 24 * 30;
 export const YEAR = 1000 * 60 * 60 * 24 * 365;
+
+export const PRODUCTS_PER_PAGE = 1;

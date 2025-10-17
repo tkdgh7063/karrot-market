@@ -1,5 +1,6 @@
 "use server";
 
+import { PRODUCTS_PER_PAGE } from "@/lib/constants";
 import db from "@/lib/db";
 
 export async function fetchMoreProducts(page: number) {
@@ -11,8 +12,8 @@ export async function fetchMoreProducts(page: number) {
       created_at: true,
       id: true,
     },
-    take: 1,
-    skip: 1,
+    take: PRODUCTS_PER_PAGE,
+    skip: page * PRODUCTS_PER_PAGE,
     orderBy: {
       created_at: "desc",
     },
