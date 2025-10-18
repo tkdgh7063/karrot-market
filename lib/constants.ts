@@ -43,3 +43,6 @@ export const MONTH = 1000 * 60 * 60 * 24 * 30;
 export const YEAR = 1000 * 60 * 60 * 24 * 365;
 
 export const PRODUCTS_PER_PAGE = 1;
+
+export const ALLOWED_TYPES = ["image/jpeg", "image/png"];
+export const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
