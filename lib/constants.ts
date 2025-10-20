@@ -3,8 +3,15 @@ export const PASSWORD_REGEXP = new RegExp(
 );
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 20;
+
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 15;
+
+export const TITLE_MIN_LENGTH = 2;
+export const TITLE_MAX_LENGTH = 50;
+
+export const DESCRIPTION_MIN_LENGTH = 10;
+export const DESCRIPTION_MAX_LENGTH = 500;
 
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "Email is required",
@@ -29,6 +36,20 @@ export const ERROR_MESSAGES = {
 
   PHONE_INVALID_FORMAT: "Please enter a valid phone number",
   PHONE_INVALID_LOCALE: "Only Korean phone numbers are allowed",
+
+  TITLE_REQUIRED: "Title is required",
+  TITLE_TOO_SHORT: "Title must be at least 2 characters long",
+  TITLE_TOO_LONG: "Title must be less than 50 characters",
+
+  PRICE_REQUIRED: "Price is required",
+  PRICE_INVALID: "Please enter a valid price",
+  PRICE_NEGATIVE: "Price cannot be negative",
+
+  DESCRIPTION_REQUIRED: "Description is required",
+  DESCRIPTION_TOO_SHORT: "Description must be at least 10 characters long",
+  DESCRIPTION_TOO_LONG: "Description must be less than 500 characters",
+
+  PHOTO_REQUIRED: "Photo is required",
 };
 
 export const HASH_ROUNDS = 12;

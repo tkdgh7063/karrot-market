@@ -3,11 +3,12 @@
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { uploadNewProduct } from "./actions";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 
 export default function NewProduct() {
+  const [state, action] = useActionState(uploadNewProduct, null);
   const [preview, setPreview] = useState<string | null>(null);
   const onImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -24,14 +25,33 @@ export default function NewProduct() {
   };
   return (
     <div className="">
-      <form action={uploadNewProduct} className="flex flex-col gap-5 p-5">
+      <form action={action} className="flex flex-col gap-5 p-5">
         <h1 className="text-2xl">New Product</h1>
-        <Input name="title" placeholder="Title" type="text" required />
-        <Input name="price" placeholder="Price" type="number" required />
+        <Input
+          name="title"
+          placeholder="Title"
+          type="text"
+          errors={state?.fieldErrors.title}
+          required
+        />
+        <Input
+          name="price"
+          placeholder="Price"
+          type="number"
+          min={0}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            if (value < 0) return;
+            e.target.value = value.toString();
+          }}
+          errors={state?.fieldErrors.price}
+          required
+        />
         <Input
           name="description"
           placeholder="Description"
           type="text"
+          errors={state?.fieldErrors.description}
           required
         />
         <label
@@ -42,7 +62,10 @@ export default function NewProduct() {
           {preview ? null : (
             <>
               <PhotoIcon className="h-32" />
-              <div className="text-lg font-semibold">Upload a photo</div>
+              <div className="text-lg font-semibold">
+                Upload a photo
+                {state?.fieldErrors.photo}
+              </div>
             </>
           )}
         </label>
@@ -53,6 +76,7 @@ export default function NewProduct() {
           id="photo"
           accept="image/*"
           hidden
+          required
         />
         <Button text="Upload Product" />
       </form>
