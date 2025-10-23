@@ -47,3 +47,6 @@ next-env.d.ts
 /lib/generated/prisma
 *.db
 *.db-journal
+
+# TODO Memo
+todo.md
