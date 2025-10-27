@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import ProductList from "@/components/product-list";
 import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -22,6 +23,10 @@ async function getInitialProducts() {
 }
 
 export type InitialProducts = PromiseReturnType<typeof getInitialProducts>;
+
+export const metadata: Metadata = {
+  title: "Products",
+};
 
 export default async function Products() {
   const initialProducts = await getInitialProducts();
