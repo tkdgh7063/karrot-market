@@ -3,6 +3,7 @@ import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { Metadata } from "next";
+import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,24 +14,14 @@ async function getIsOwner(userId: number) {
   return false;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const id = Number((await params).id);
+async function getProductTitle(id: number) {
   const product = await db.product.findUnique({
-    where: {
-      id,
-    },
+    where: { id },
     select: {
       title: true,
     },
   });
-
-  return {
-    title: product?.title,
-  };
+  return product;
 }
 
 async function getProduct(id: number) {
@@ -48,6 +39,29 @@ async function getProduct(id: number) {
   return product;
 }
 
+const getCachedProductTitle = nextCache(
+  getProductTitle,
+  ["karrot-product-title"],
+  { tags: ["product-title"] },
+);
+
+const getCachedProduct = nextCache(getProduct, ["karrot-product-detail"], {
+  tags: ["product-title", "product-detail"],
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const id = Number((await params).id);
+  const product = await getCachedProductTitle(id);
+
+  return {
+    title: product?.title,
+  };
+}
+
 export default async function ProductDetail({
   params,
 }: {
@@ -57,12 +71,17 @@ export default async function ProductDetail({
   if (isNaN(id)) {
     return notFound();
   }
-  const product = await getProduct(id);
+  const product = await getCachedProduct(id);
   if (!product) {
     return notFound();
   }
 
   const isOwner = await getIsOwner(product.userId);
+  const revalidate = async () => {
+    "use server";
+    revalidateTag("product-title");
+  };
+
   return (
     <div>
       <div className="relative aspect-square">
@@ -98,6 +117,11 @@ export default async function ProductDetail({
         <span className="text-xl font-semibold">
           {formatToWon(product.price)} Won
         </span>
+        <form action={revalidate}>
+          <button className="rounded-md bg-red-500 px-4 py-2.5 font-semibold text-white">
+            Revalidate
+          </button>
+        </form>
         {isOwner ? (
           <Link
             className="rounded-md bg-red-500 px-4 py-2.5 font-semibold text-white"
