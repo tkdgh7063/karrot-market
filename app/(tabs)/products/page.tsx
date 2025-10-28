@@ -4,6 +4,11 @@ import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { PromiseReturnType } from "@prisma/client";
 import Link from "next/link";
+import { unstable_cache as nextCache } from "next/cache";
+
+const getCachedproducts = nextCache(getInitialProducts, ["karrot-products"], {
+  revalidate: 60,
+});
 
 async function getInitialProducts() {
   const products = await db.product.findMany({
@@ -14,7 +19,6 @@ async function getInitialProducts() {
       created_at: true,
       id: true,
     },
-    take: 1,
     orderBy: {
       created_at: "desc",
     },
@@ -29,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Products() {
-  const initialProducts = await getInitialProducts();
+  const initialProducts = await getCachedproducts();
   return (
     <div>
       <ProductList initialProducts={initialProducts} />

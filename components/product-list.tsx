@@ -53,17 +53,17 @@ export default function ProductList({
       {products.map((product) => {
         return <ListProduct {...product} key={product.id} />;
       })}
-      {!isLastPage ? (
+      {/* {!isLastPage ? (
         <span
           ref={trigger}
           style={{
-            marginTop: `${page + 1 * 300}vh`,
+            marginTop: `${page + 1 * 900}vh`,
           }}
           className="mx-auto mb-96 w-fit rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold hover:cursor-pointer hover:opacity-90 active:scale-95"
         >
           {isLoading ? "Loading..." : "Load more"}
         </span>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }
