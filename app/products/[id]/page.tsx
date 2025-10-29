@@ -141,6 +141,9 @@ export default async function ProductDetail({
   );
 }
 
+export const dynamicParams = true; // Dynamic segments not included in `generateStaticParams` are generated on demand. (default)
+// export const dynamicParams = false; // Dynamic segments not included in `generateStaticParams` will return a 404.
+
 export async function generateStaticParams() {
   const products = await db.product.findMany({ select: { id: true } });
   return products.map((product) => ({ id: product.id + "" }));
