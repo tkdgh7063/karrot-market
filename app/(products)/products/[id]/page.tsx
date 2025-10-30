@@ -30,22 +30,19 @@ async function getProduct(id: number) {
   return product;
 }
 
-const getCachedProductTitle = nextCache(
-  getProductTitle,
-  ["karrot-product-title"],
-  { tags: ["product-title"] },
-);
-
-const getCachedProduct = nextCache(getProduct, ["karrot-product-detail"], {
-  tags: ["product-title", "product-detail"],
-});
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const id = Number((await params).id);
+
+  const getCachedProductTitle = nextCache(
+    getProductTitle,
+    ["karrot", "product", "title", id.toString()],
+    { tags: [`product-title-${id}`] },
+  );
+
   const product = await getCachedProductTitle(id);
 
   return {
@@ -68,6 +65,15 @@ export default async function ProductDetailPage({
   if (isNaN(id)) {
     return notFound();
   }
+
+  const getCachedProduct = nextCache(
+    getProduct,
+    ["karrot", "product", "detail", id.toString()],
+    {
+      tags: [`product-title-${id}`, `product-detail-${id}`],
+    },
+  );
+
   const product = await getCachedProduct(id);
   if (!product) {
     return notFound();

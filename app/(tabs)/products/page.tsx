@@ -6,10 +6,9 @@ import { PromiseReturnType } from "@prisma/client";
 import Link from "next/link";
 import { unstable_cache as nextCache, revalidatePath } from "next/cache";
 
-const getCachedproducts = nextCache(getInitialProducts, ["karrot-products"]);
+const getCachedproducts = nextCache(getInitialProducts, ["karrot", "products"]);
 
 async function getInitialProducts() {
-  console.log("DB call");
   const products = await db.product.findMany({
     select: {
       title: true,
