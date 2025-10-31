@@ -50,3 +50,6 @@ next-env.d.ts
 
 # TODO Memo
 todo.md
+
+# Images folder
+/public/uploads

@@ -56,8 +56,8 @@ export async function updateProduct(_: any, formData: FormData) {
     const buffer = Buffer.from(await photo.arrayBuffer());
     const photoName = Date.now() + "-" + photo.name;
     await fs.unlink(`./public/${product.photo}`);
-    await fs.writeFile(`./public/${photoName}`, buffer);
-    photo = "/" + photoName;
+    await fs.writeFile(`./public/uploads/${photoName}`, buffer);
+    photo = "/uploads/" + photoName;
   } else {
     // keep the old photo
     photo = product.photo;
