@@ -12,6 +12,7 @@ import fs from "fs/promises";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const productSchema = z.object({
   title: z
@@ -76,6 +77,7 @@ export async function uploadNewProduct(_: any, formData: FormData) {
       });
 
       // redirect("/products");
+      revalidatePath("/products");
       redirect(`/products/${product.id}`);
     } else {
       redirect("/login");

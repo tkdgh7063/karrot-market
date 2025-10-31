@@ -2,6 +2,7 @@
 
 import db from "@/lib/db";
 import getSession from "@/lib/session";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function deleteProduct(formData: FormData) {
@@ -17,5 +18,7 @@ export async function deleteProduct(formData: FormData) {
   if (product.userId !== session.id) return redirect("/products");
 
   await db.product.delete({ where: { id } });
+  revalidatePath("/products");
+  revalidatePath(`/products/${id}`);
   return redirect("/products");
 }

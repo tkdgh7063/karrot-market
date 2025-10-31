@@ -37,11 +37,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const id = Number((await params).id);
 
-  const getCachedProductTitle = nextCache(
-    getProductTitle,
-    ["karrot", "product", "title", id.toString()],
-    { tags: [`product-title-${id}`] },
-  );
+  const getCachedProductTitle = nextCache(getProductTitle, [
+    "karrot",
+    "product",
+    "title",
+    id.toString(),
+  ]);
 
   const product = await getCachedProductTitle(id);
 
@@ -66,13 +67,12 @@ export default async function ProductDetailPage({
     return notFound();
   }
 
-  const getCachedProduct = nextCache(
-    getProduct,
-    ["karrot", "product", "detail", id.toString()],
-    {
-      tags: [`product-title-${id}`, `product-detail-${id}`],
-    },
-  );
+  const getCachedProduct = nextCache(getProduct, [
+    "karrot",
+    "product",
+    "detail",
+    id.toString(),
+  ]);
 
   const product = await getCachedProduct(id);
   if (!product) {
@@ -84,7 +84,6 @@ export default async function ProductDetailPage({
   return <ProductDetail product={product} isOwner={isOwner} />;
 }
 
-export const revalidate = 60;
 export const dynamicParams = true; // Dynamic segments not included in `generateStaticParams` are generated on demand. (default)
 // export const dynamicParams = false; // Dynamic segments not included in `generateStaticParams` will return a 404.
 
