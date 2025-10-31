@@ -1,4 +1,3 @@
-import { deleteProduct } from "@/app/(products)/products/[id]/actions";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -59,19 +58,13 @@ export default function ProductDetail({
         <span className="text-xl font-semibold">
           {formatToWon(product.price)} Won
         </span>
-        <Link
-          className="rounded-md bg-orange-500 px-4 py-2.5 font-semibold text-white"
-          href={`/products/${product.id}/edit`}
-        >
-          Edit Product
-        </Link>
         {isOwner ? (
-          <form action={deleteProduct}>
-            <input type="hidden" name="id" value={product.id} />
-            <button className="rounded-md bg-red-500 px-4 py-2.5 font-semibold text-white">
-              Delete Product
-            </button>
-          </form>
+          <Link
+            className="rounded-md bg-orange-500 px-4 py-2.5 font-semibold text-white"
+            href={`/products/${product.id}/edit`}
+          >
+            Edit Product
+          </Link>
         ) : (
           <Link
             className="rounded-md bg-orange-500 px-4 py-2.5 font-semibold text-white"

@@ -7,6 +7,7 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
 import Button from "./button";
 import Input from "./input";
+import { deleteProduct } from "@/app/(products)/products/[id]/edit/actions";
 
 export default function EditProductForm({ product }: { product: Product }) {
   if (!product) return;
@@ -86,6 +87,12 @@ export default function EditProductForm({ product }: { product: Product }) {
           hidden
         />
         <Button text="Edit Product" />
+      </form>
+      <form action={deleteProduct} className="flex flex-col px-5">
+        <input type="hidden" name="id" value={product.id} />
+        <button className="h-10 w-full self-center rounded-lg bg-red-500 text-center font-semibold text-white transition-colors hover:bg-red-400 disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:text-neutral-300 disabled:hover:bg-neutral-400">
+          Delete Product
+        </button>
       </form>
     </div>
   );
