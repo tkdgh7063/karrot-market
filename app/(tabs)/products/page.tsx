@@ -40,7 +40,7 @@ export default async function Products() {
     <div>
       <ProductList initialProducts={initialProducts} />
       <Link
-        href="/products/new"
+        href="/add-products"
         className="fixed right-4 bottom-25 flex size-14 items-center justify-center rounded-2xl bg-orange-500 text-white transition-colors hover:bg-orange-400"
       >
         <PlusIcon className="size-12" />
