@@ -54,9 +54,12 @@ export async function updateProduct(_: any, formData: FormData) {
   if (photo instanceof File && photo.size > 0 && photo.name) {
     // temporary way to save the photo
     const buffer = Buffer.from(await photo.arrayBuffer());
-    await fs.writeFile(`./public/${Date.now()}-${photo.name}`, buffer);
-    photo = `/${photo.name}`;
+    const photoName = Date.now() + "-" + photo.name;
+    await fs.unlink(`./public/${product.photo}`);
+    await fs.writeFile(`./public/${photoName}`, buffer);
+    photo = "/" + photoName;
   } else {
+    // keep the old photo
     photo = product.photo;
   }
 
@@ -95,7 +98,9 @@ export async function deleteProduct(formData: FormData) {
 
   if (product.userId !== session.id) return redirect("/products");
 
+  await fs.unlink(`./public/${product.photo}`);
   await db.product.delete({ where: { id } });
+
   revalidatePath("/products");
   revalidatePath(`/products/${id}`);
 
