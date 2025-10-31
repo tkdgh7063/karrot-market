@@ -49,7 +49,10 @@ export async function uploadNewProduct(_: any, formData: FormData) {
   if (data.photo instanceof File) {
     // temporary way to save the photo
     const photoData = await data.photo.arrayBuffer();
-    await fs.appendFile(`./public/${data.photo.name}`, Buffer.from(photoData));
+    await fs.writeFile(
+      `./public/${Date.now()}-${data.photo.name}`,
+      Buffer.from(photoData),
+    );
     data.photo = `/${data.photo.name}`;
   }
 

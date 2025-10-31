@@ -54,7 +54,7 @@ export async function updateProduct(_: any, formData: FormData) {
   if (photo instanceof File && photo.size > 0 && photo.name) {
     // temporary way to save the photo
     const buffer = Buffer.from(await photo.arrayBuffer());
-    await fs.writeFile(`./public/${photo.name}`, buffer);
+    await fs.writeFile(`./public/${Date.now()}-${photo.name}`, buffer);
     photo = `/${photo.name}`;
   } else {
     photo = product.photo;
