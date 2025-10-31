@@ -1,12 +1,12 @@
 "use client";
 
 import { updateProduct } from "@/app/(products)/products/[id]/edit/actions";
+import { Product } from "@/app/(products)/products/[id]/edit/page";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
 import Button from "./button";
 import Input from "./input";
-import { Product } from "@/app/(products)/products/[id]/edit/page";
 
 export default function EditProductForm({ product }: { product: Product }) {
   if (!product) return;

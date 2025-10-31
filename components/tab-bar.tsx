@@ -1,19 +1,19 @@
 "use client";
 
 import {
-  HomeIcon as SolidHomeIcon,
-  NewspaperIcon as SolidNewspaperIcon,
-  ChatBubbleLeftRightIcon as SolidChatIcon,
-  VideoCameraIcon as SolidCameraIcon,
-  UserCircleIcon as SolidUserIcon,
-} from "@heroicons/react/24/solid";
-import {
+  VideoCameraIcon as OutlineCameraIcon,
+  ChatBubbleLeftRightIcon as OutlineChatIcon,
   HomeIcon as OutlineHomeIcon,
   NewspaperIcon as OutlineNewspaperIcon,
-  ChatBubbleLeftRightIcon as OutlineChatIcon,
-  VideoCameraIcon as OutlineCameraIcon,
   UserCircleIcon as OutlineUserIcon,
 } from "@heroicons/react/24/outline";
+import {
+  VideoCameraIcon as SolidCameraIcon,
+  ChatBubbleLeftRightIcon as SolidChatIcon,
+  HomeIcon as SolidHomeIcon,
+  NewspaperIcon as SolidNewspaperIcon,
+  UserCircleIcon as SolidUserIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

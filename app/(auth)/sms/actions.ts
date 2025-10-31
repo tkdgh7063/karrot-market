@@ -1,9 +1,9 @@
 "use server";
 
-import z from "zod";
-import validator from "validator";
 import { ERROR_MESSAGES } from "@/lib/constants";
 import { redirect } from "next/navigation";
+import validator from "validator";
+import z from "zod";
 
 const phoneSchema = z
   .string()

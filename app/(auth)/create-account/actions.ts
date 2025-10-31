@@ -1,19 +1,19 @@
 "use server";
 
 import {
+  ERROR_MESSAGES,
+  HASH_ROUNDS,
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEXP,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
-  ERROR_MESSAGES,
-  HASH_ROUNDS,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { z } from "zod";
+import getSession from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
-import getSession from "@/lib/session";
+import { z } from "zod";
 
 function checkUsername(username: string): boolean {
   return !username.includes("admin");

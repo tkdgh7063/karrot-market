@@ -7,12 +7,12 @@ import {
   TITLE_MAX_LENGTH,
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
-import z from "zod";
-import fs from "fs/promises";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
-import { redirect } from "next/navigation";
+import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import z from "zod";
 
 const productSchema = z.object({
   title: z

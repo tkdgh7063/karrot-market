@@ -2,10 +2,10 @@
 
 import Button from "@/components/button";
 import Input from "@/components/input";
+import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
 import { uploadNewProduct } from "./actions";
-import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 
 export default function NewProduct() {
   const [state, action] = useActionState(uploadNewProduct, null);

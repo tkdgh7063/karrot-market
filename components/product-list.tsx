@@ -1,9 +1,9 @@
 "use client";
 
-import { InitialProducts } from "@/app/(tabs)/products/page";
-import ListProduct from "./list-product";
-import { useEffect, useRef, useState } from "react";
 import { fetchMoreProducts } from "@/app/(tabs)/products/actions";
+import { InitialProducts } from "@/app/(tabs)/products/page";
+import { useEffect, useRef, useState } from "react";
+import ListProduct from "./list-product";
 
 export default function ProductList({
   initialProducts,
