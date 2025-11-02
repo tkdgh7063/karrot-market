@@ -3,7 +3,7 @@ import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { PromiseReturnType } from "@prisma/client";
 import type { Metadata } from "next";
-import { unstable_cache as nextCache } from "next/cache";
+import { unstable_cache as nextCache, revalidatePath } from "next/cache";
 import Link from "next/link";
 
 const getCachedproducts = nextCache(getInitialProducts, ["karrot", "products"]);
@@ -35,10 +35,17 @@ export const dynamic = "force-static";
 
 export default async function Products() {
   const initialProducts = await getCachedproducts();
-
+  const revalidate = async () => {
+    "use server";
+    revalidatePath("/products");
+  };
   return (
     <div>
       <ProductList initialProducts={initialProducts} />
+      {/* database revalidation, just for convenience */}
+      <form action={revalidate}>
+        <button>Revalidate</button>
+      </form>
       <Link
         href="/add-products"
         className="fixed right-4 bottom-25 flex size-14 items-center justify-center rounded-2xl bg-orange-500 text-white transition-colors hover:bg-orange-400"
