@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import getSession from "./lib/session";
 
-const publicOnlyURLs = new Set(["/", "/login", "/sms", "/create-account"]);
+const publicOnlyURLs = new Set([
+  "/",
+  "/create-account",
+  "/login",
+  "/sms",
+  "/github/auth",
+  "/github/callback",
+]);
 
 export async function middleware(request: NextRequest) {
   const isLoggedIn = Boolean((await getSession()).id);
