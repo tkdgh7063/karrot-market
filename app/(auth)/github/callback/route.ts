@@ -30,12 +30,33 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { login, id, avatar_url, email } = await (
+  const { login, id, avatar_url } = await (
     await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${access_token}` },
       method: "GET",
     })
   ).json();
+
+  const response = await (
+    await fetch("https://api.github.com/user/emails", {
+      headers: { Authorization: `Bearer ${access_token}` },
+      method: "GET",
+    })
+  ).json();
+
+  let email = null;
+  for (const item of response) {
+    if (!item.verified) continue;
+
+    if (item.primary) {
+      email = item.email;
+      break;
+    }
+
+    if (!email && item.visibility === "public") {
+      email = item.email;
+    }
+  }
 
   const user = await db.user.findUnique({
     where: {
@@ -72,7 +93,7 @@ export async function GET(request: NextRequest) {
         username,
         github_id: id.toString(),
         avatar: avatar_url,
-        email: email ?? null,
+        email,
       },
       select: {
         id: true,
