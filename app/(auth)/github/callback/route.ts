@@ -1,28 +1,16 @@
 import db from "@/lib/db";
+import { getAccessToken, getProfile } from "@/lib/github";
 import { loginUser } from "@/lib/session";
+import { randomUUID } from "crypto";
 import { notFound, redirect } from "next/navigation";
 import { NextRequest } from "next/server";
-import { randomUUID } from "crypto";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   if (!code) return notFound();
 
-  const baseUrl = "https://github.com/login/oauth/access_token";
-  const params = new URLSearchParams({
-    client_id: process.env.GITHUB_CLIENT_ID!,
-    client_secret: process.env.GITHUB_CLIENT_SECRET!,
-    code,
-  }).toString();
-  const url = `${baseUrl}?${params}`;
-
-  const { error, access_token } = await (
-    await fetch(url, {
-      headers: { Accept: "application/json" },
-      method: "POST",
-    })
-  ).json();
-  if (error) {
+  const access_token = await getAccessToken(code);
+  if (!access_token) {
     return new Response(
       // JSON.stringify(error)
       null,
@@ -30,33 +18,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { login, id, avatar_url } = await (
-    await fetch("https://api.github.com/user", {
-      headers: { Authorization: `Bearer ${access_token}` },
-      method: "GET",
-    })
-  ).json();
-
-  const response = await (
-    await fetch("https://api.github.com/user/emails", {
-      headers: { Authorization: `Bearer ${access_token}` },
-      method: "GET",
-    })
-  ).json();
-
-  let email = null;
-  for (const item of response) {
-    if (!item.verified) continue;
-
-    if (item.primary) {
-      email = item.email;
-      break;
-    }
-
-    if (!email && item.visibility === "public") {
-      email = item.email;
-    }
-  }
+  const { login, id, avatar_url, email } = await getProfile(access_token);
 
   const user = await db.user.findUnique({
     where: {
