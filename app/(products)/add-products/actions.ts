@@ -8,7 +8,7 @@ import {
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { getSession } from "@/lib/session";
 import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";

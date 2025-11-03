@@ -1,6 +1,6 @@
 import ProductDetail from "@/components/product-detail";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { getSession } from "@/lib/session";
 import { Metadata } from "next";
 import { unstable_cache as nextCache } from "next/cache";
 import { notFound } from "next/navigation";

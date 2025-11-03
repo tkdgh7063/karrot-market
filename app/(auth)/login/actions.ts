@@ -2,7 +2,7 @@
 
 import { ERROR_MESSAGES } from "@/lib/constants";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { getSession, loginUser } from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 import z from "zod";
@@ -59,9 +59,7 @@ export async function login(_: any, formData: FormData) {
 
     // log the user in
     if (match) {
-      const session = await getSession();
-      session.id = user!.id;
-      await session.save();
+      await loginUser(user!.id);
 
       // redirect user
       redirect("/profile");

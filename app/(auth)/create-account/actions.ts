@@ -10,7 +10,7 @@ import {
   USERNAME_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { loginUser } from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -136,9 +136,7 @@ export async function createAccount(_: any, formData: FormData) {
     });
 
     // log the user in
-    const session = await getSession();
-    session.id = user.id;
-    await session.save();
+    await loginUser(user.id);
 
     // redirect user
     redirect("/profile");
