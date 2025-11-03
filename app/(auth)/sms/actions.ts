@@ -48,7 +48,7 @@ export default async function smsLogin(
         error: z.flattenError(result.error),
       };
     } else {
-      redirect("/");
+      return redirect("/");
     }
   }
 }

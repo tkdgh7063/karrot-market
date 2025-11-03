@@ -139,6 +139,6 @@ export async function createAccount(_: any, formData: FormData) {
     await loginUser(user.id);
 
     // redirect user
-    redirect("/profile");
+    return redirect("/profile");
   }
 }

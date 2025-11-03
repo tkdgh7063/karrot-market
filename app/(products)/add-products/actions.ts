@@ -79,9 +79,9 @@ export async function uploadNewProduct(_: any, formData: FormData) {
 
       // redirect("/products");
       revalidatePath("/products");
-      redirect(`/products/${product.id}`);
+      return redirect(`/products/${product.id}`);
     } else {
-      redirect("/login");
+      return redirect("/login");
     }
   }
 }

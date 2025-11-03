@@ -82,7 +82,7 @@ export async function updateProduct(_: any, formData: FormData) {
     revalidatePath("/products");
     revalidatePath(`/products/${updatedProduct.id}`);
 
-    redirect(`/products/${updatedProduct.id}`);
+    return redirect(`/products/${updatedProduct.id}`);
   }
 }
 
@@ -104,5 +104,5 @@ export async function deleteProduct(formData: FormData) {
   revalidatePath("/products");
   revalidatePath(`/products/${id}`);
 
-  redirect("/products");
+  return redirect("/products");
 }

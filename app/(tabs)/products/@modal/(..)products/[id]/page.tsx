@@ -28,7 +28,7 @@ export default async function ProductModal({
     },
   });
   if (!product) {
-    redirect("/products");
+    return redirect("/products");
   }
 
   return (

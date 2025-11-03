@@ -2,7 +2,7 @@
 
 import { ERROR_MESSAGES } from "@/lib/constants";
 import db from "@/lib/db";
-import { getSession, loginUser } from "@/lib/session";
+import { loginUser } from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 import z from "zod";
@@ -62,7 +62,7 @@ export async function login(_: any, formData: FormData) {
       await loginUser(user!.id);
 
       // redirect user
-      redirect("/profile");
+      return redirect("/profile");
     } else {
       // show password error
       return {

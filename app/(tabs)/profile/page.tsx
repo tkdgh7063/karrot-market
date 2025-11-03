@@ -23,7 +23,7 @@ export default async function Profile() {
     "use server";
     const session = await getSession();
     session.destroy();
-    redirect("/");
+    return redirect("/");
   };
   const user = await getUser();
   return (
