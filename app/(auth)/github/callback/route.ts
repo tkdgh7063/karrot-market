@@ -2,6 +2,7 @@ import db from "@/lib/db";
 import { loginUser } from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
 import { NextRequest } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -49,9 +50,26 @@ export async function GET(request: NextRequest) {
     await loginUser(user.id);
     return redirect("/profile");
   } else {
+    const isUsernameExists = await db.user.findUnique({
+      where: {
+        username: login,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    let username;
+    if (isUsernameExists) {
+      const uuid = randomUUID().slice(4);
+      username = login + uuid;
+    } else {
+      username = login;
+    }
+
     const newUser = await db.user.create({
       data: {
-        username: login, // this can be duplicated, so need to work out a better way to handle this, like add a unique constraint
+        username,
         github_id: id.toString(),
         avatar: avatar_url,
         email: email ?? null,
