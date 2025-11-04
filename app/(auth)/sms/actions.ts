@@ -24,7 +24,7 @@ const phoneSchema = z
   );
 
 async function isCodeExists(code: number) {
-  const isExists = await db.sMSCode.findUnique({
+  const isExists = await db.sMSCode.findFirst({
     where: {
       code: code.toString(),
     },
@@ -35,6 +35,7 @@ async function isCodeExists(code: number) {
 
   return Boolean(isExists);
 }
+
 const codeSchema = z.coerce
   .number()
   .min(100000)
@@ -45,22 +46,17 @@ interface ActionState {
   code: boolean;
 }
 
-async function createCode() {
-  const code = crypto.randomInt(100000, 999999).toString();
-  const isCodeExists = await db.sMSCode.findUnique({
-    where: {
-      code,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (isCodeExists) {
-    return createCode();
-  } else {
-    return code;
+async function createCode(phone: string) {
+  // code generation
+  let code: string;
+  while (true) {
+    code = crypto.randomInt(100000, 999999).toString();
+    const exists = await db.sMSCode.findUnique({
+      where: { code_phone: { code, phone } },
+    });
+    if (!exists) break;
   }
+  return code;
 }
 
 function generateRandomName() {
@@ -78,7 +74,7 @@ export default async function smsLogin(
   prevState: ActionState,
   formData: FormData,
 ) {
-  const phone = formData.get("phone");
+  const phone = formData.get("phone")!;
   const code = formData.get("code");
 
   if (!prevState.code) {
@@ -99,10 +95,12 @@ export default async function smsLogin(
       });
 
       // create code
-      const code = await createCode();
+      const code = await createCode(result.data);
       await db.sMSCode.create({
         data: {
           code,
+          phone: result.data,
+          expires_at: new Date(Date.now() + 3 * 60 * 1000),
           user: {
             connectOrCreate: {
               where: {
@@ -141,15 +139,35 @@ export default async function smsLogin(
       };
     } else {
       // get the userId of code
-      const codeRecord = (await db.sMSCode.findUnique({
+      const codeRecord = await db.sMSCode.findUnique({
         where: {
-          code: result.data.toString(),
+          code_phone: {
+            code: result.data.toString(),
+            phone: phone.toString(),
+          },
         },
         select: {
           id: true,
           userId: true,
+          expires_at: true,
         },
-      }))!;
+      });
+
+      if (!codeRecord) {
+        return {
+          code: true,
+          error: {
+            formErrors: [ERROR_MESSAGES.CODE_INVALID],
+          },
+        };
+      } else if (codeRecord.expires_at <= new Date()) {
+        return {
+          code: true,
+          error: {
+            formErrors: [ERROR_MESSAGES.CODE_EXPIRED],
+          },
+        };
+      }
 
       await db.sMSCode.delete({
         where: {

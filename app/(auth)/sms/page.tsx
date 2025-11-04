@@ -2,7 +2,7 @@
 
 import Button from "@/components/button";
 import Input from "@/components/input";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import smsLogin from "./actions";
 
 const initialState = {
@@ -12,6 +12,7 @@ const initialState = {
 
 export default function SMSLogin() {
   const [state, action] = useActionState(smsLogin, initialState);
+  const [phone, setPhone] = useState<string>("");
   return (
     <div className="flex flex-col gap-10 px-6 py-8">
       <div className="flex flex-col gap-2 *:font-medium">
@@ -20,21 +21,25 @@ export default function SMSLogin() {
       </div>
       <form action={action} className="flex flex-col gap-3">
         {state.code ? (
-          <Input
-            name="code"
-            type="number"
-            placeholder="Verification code"
-            errors={state.error?.formErrors}
-            min={100000}
-            max={999999}
-            required
-          />
+          <>
+            <input type="hidden" name="phone" value={phone} />
+            <Input
+              name="code"
+              type="number"
+              placeholder="Verification code"
+              errors={state.error?.formErrors}
+              min={100000}
+              max={999999}
+              required
+            />
+          </>
         ) : (
           <Input
             name="phone"
             type="text"
             placeholder="Phone number"
             errors={state.error?.formErrors}
+            onChange={(e) => setPhone(e.target.value)}
             required
           />
         )}

@@ -35,6 +35,7 @@ export const ERROR_MESSAGES = {
   USERNAME_TAKEN: "This username is already taken",
 
   CODE_INVALID: "Code does not exist",
+  CODE_EXPIRED: "Code is expired",
 
   PHONE_INVALID_FORMAT: "Please enter a valid phone number",
   PHONE_INVALID_LOCALE: "Only Korean phone numbers are allowed",
