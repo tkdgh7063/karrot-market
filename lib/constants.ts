@@ -34,6 +34,8 @@ export const ERROR_MESSAGES = {
   USERNAME_CANNOT_CONTAIN_ADMIN: "Username cannot contain 'admin'",
   USERNAME_TAKEN: "This username is already taken",
 
+  CODE_INVALID: "Code does not exist",
+
   PHONE_INVALID_FORMAT: "Please enter a valid phone number",
   PHONE_INVALID_LOCALE: "Only Korean phone numbers are allowed",
 
