@@ -35,7 +35,7 @@ export default function TabBar() {
         ) : (
           <OutlineNewspaperIcon className="size-7" />
         )}
-        <span>동네생활</span>
+        <span>Town</span>
       </Link>
       <Link href="/chat" className="flex flex-col items-center gap-px">
         {pathname === "/chat" ? (
@@ -51,7 +51,7 @@ export default function TabBar() {
         ) : (
           <OutlineCameraIcon className="size-7" />
         )}
-        <span>Shopping</span>
+        <span>Shop</span>
       </Link>
       <Link href="/profile" className="flex flex-col items-center gap-px">
         {pathname === "/profile" ? (
