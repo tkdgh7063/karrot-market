@@ -1,4 +1,4 @@
-import { DAY, HOUR, MINUTE, MONTH, SECOND, YEAR } from "./constants";
+import { DAY, HOUR, MINUTE, MONTH, YEAR } from "./constants";
 
 export function formatToWon(price: number): string {
   return price.toLocaleString("ko-KR");
@@ -20,5 +20,5 @@ export function formatDate(date: Date): string {
     return formatter.format(Math.floor(diff / HOUR), "hour");
   else if (absDiff > MINUTE)
     return formatter.format(Math.floor(diff / MINUTE), "minute");
-  else return formatter.format(Math.floor(diff / SECOND), "second");
+  else return "just now";
 }
