@@ -75,6 +75,29 @@ async function getViews(postId: number) {
   return views;
 }
 
+const getCachedPost = (postId: number) => {
+  return nextCache(async () => getPost(postId), ["karrot", "post", "detail"], {
+    revalidate: 60,
+    tags: [`post-detail-${postId}`],
+  })();
+};
+
+const getCachedLikeStatus = (postId: number, userId: number) => {
+  return nextCache(
+    async () => getLikeStatus(postId, userId),
+    ["karrot", "post", "like-status"],
+    {
+      tags: [`like-status-${postId}`],
+    },
+  )();
+};
+
+const getCachedViews = (postId: number) => {
+  return nextCache(async () => getViews(postId), ["karrot", "post", "views"], {
+    revalidate: 5,
+  })();
+};
+
 export default async function PostDetailPage({
   params,
 }: {
@@ -82,21 +105,6 @@ export default async function PostDetailPage({
 }) {
   const id = Number((await params).id);
   if (isNaN(id)) return notFound();
-
-  const getCachedPost = nextCache(getPost, ["karrot", "post", "detail"], {
-    revalidate: 60,
-    tags: [`post-detail-${id}`],
-  });
-  const getCachedLikeStatus = nextCache(
-    async (postId: number, userId: number) => getLikeStatus(postId, userId),
-    ["karrot", "post", "like-status"],
-    {
-      tags: [`like-status-${id}`],
-    },
-  );
-  const getCachedViews = nextCache(getViews, ["karrot", "post", "views"], {
-    revalidate: 5,
-  });
 
   const post = await getCachedPost(id);
   if (!post) return notFound();
