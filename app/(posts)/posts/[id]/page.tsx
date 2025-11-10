@@ -21,7 +21,6 @@ async function getPost(postId: number) {
       select: {
         title: true,
         description: true,
-        views: true,
         created_at: true,
         updated_at: true,
         _count: {
@@ -64,6 +63,18 @@ async function getLikeStatus(postId: number, userId: number) {
   return { isLiked: Boolean(isLiked), likeCount };
 }
 
+async function getViews(postId: number) {
+  const views = await db.post.findUnique({
+    where: {
+      id: postId,
+    },
+    select: {
+      views: true,
+    },
+  });
+  return views;
+}
+
 export default async function PostDetailPage({
   params,
 }: {
@@ -83,12 +94,17 @@ export default async function PostDetailPage({
       tags: [`like-status-${id}`],
     },
   );
+  const getCachedViews = nextCache(getViews, ["karrot", "post", "views"], {
+    revalidate: 5,
+  });
 
   const post = await getCachedPost(id);
   if (!post) return notFound();
 
   const userId = (await getSession()).id!;
   const { isLiked, likeCount } = await getCachedLikeStatus(id, userId);
+
+  const views = (await getCachedViews(id))!.views;
 
   return (
     <div className="p-5 text-white">
@@ -113,7 +129,7 @@ export default async function PostDetailPage({
         <div className="flex items-center gap-1.5 text-sm text-neutral-400">
           <EyeIcon className="size-5" />
           <span>
-            {post.views} {post.views === 1 ? "view" : "views"}
+            {views} {views === 1 ? "view" : "views"}
           </span>
         </div>
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
