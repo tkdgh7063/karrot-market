@@ -1,3 +1,4 @@
+import CommentsList from "@/components/comments-list";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
 import { getSession } from "@/lib/session";
@@ -143,9 +144,8 @@ export default async function PostDetailPage({
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
       <div className="flex flex-col items-start gap-5">
-        <div className="flex items-center gap-1.5 text-sm text-neutral-400">
-          <span>{post._count.comments} comments</span>
-        </div>
+        <div>{post._count.comments} Comments</div>
+        <CommentsList postId={id} />
       </div>
     </div>
   );
