@@ -1,9 +1,11 @@
 "use client";
 
 import { dislikePost, likePost } from "@/app/(posts)/posts/[id]/actions";
-import { HandThumbUpIcon as OutlineHandThumbUpIcon } from "@heroicons/react/24/outline";
-import { HandThumbUpIcon as SolidHandThumbUpIcon } from "@heroicons/react/24/solid";
-import { startTransition, useOptimistic } from "react";
+import {
+  HandThumbUpIcon as OutlineHandThumbUpIcon,
+  HandThumbUpIcon as SolidHandThumbUpIcon,
+} from "@heroicons/react/24/outline";
+import { useState, useRef, startTransition, useOptimistic } from "react";
 
 interface LikeButtonProps {
   isLiked: boolean;
@@ -11,46 +13,68 @@ interface LikeButtonProps {
   postId: number;
 }
 
+const DEBOUNCE_DELAY_MS = 500;
+
 export default function LikeButton({
   isLiked,
   likeCount,
   postId,
 }: LikeButtonProps) {
-  const [optimisticLike, addOptimisticLike] = useOptimistic(
+  const [_, addOptimisticLike] = useOptimistic(
     { isLiked, likeCount },
-    (previousState, _) => ({
-      isLiked: !previousState.isLiked,
-      likeCount: previousState.isLiked
-        ? previousState.likeCount - 1
-        : previousState.likeCount + 1,
-    }),
+    (_, newState: { isLiked: boolean; likeCount: number }) => newState,
   );
 
+  const [liked, setLiked] = useState(isLiked);
+  const [count, setCount] = useState(likeCount);
+
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const toggleLike = () => {
-    startTransition(async () => {
-      addOptimisticLike(undefined);
-      if (optimisticLike.isLiked) {
-        await dislikePost(postId);
-      } else {
-        await likePost(postId);
-      }
-    });
+    const newLiked = !liked;
+    const newCount = newLiked ? count + 1 : count - 1;
+
+    setLiked(newLiked);
+    setCount(newCount);
+
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+    debounceTimerRef.current = setTimeout(() => {
+      startTransition(async () => {
+        try {
+          if (newLiked) {
+            await likePost(postId);
+          } else {
+            await dislikePost(postId);
+          }
+
+          addOptimisticLike({ isLiked: newLiked, likeCount: newCount });
+        } catch (e) {
+          setLiked(isLiked);
+          setCount(likeCount);
+        }
+      });
+    }, DEBOUNCE_DELAY_MS);
   };
 
   return (
     <button
       onClick={toggleLike}
-      className={`${optimisticLike.isLiked ? "border-orange-500 bg-orange-500 text-white" : "hover:bg-neutral-800"} flex min-w-[105.23px] items-center justify-center rounded-full border border-neutral-400 px-0.5 py-2 text-sm text-neutral-400 transition-colors hover:cursor-pointer`}
+      className={`${
+        liked
+          ? "border-orange-500 bg-orange-500 text-white"
+          : "hover:bg-neutral-800"
+      } flex min-w-[105.23px] items-center justify-center rounded-full border border-neutral-400 px-0.5 py-2 text-sm text-neutral-400 transition-colors hover:cursor-pointer`}
     >
-      {optimisticLike.isLiked ? (
+      {liked ? (
         <>
           <SolidHandThumbUpIcon className="mr-1.5 size-5" />
-          <span>Liked ({optimisticLike.likeCount})</span>
+          <span>Liked ({count})</span>
         </>
       ) : (
         <>
           <OutlineHandThumbUpIcon className="mr-1.5 size-5" />
-          <span>Like ({optimisticLike.likeCount})</span>
+          <span>Like ({count})</span>
         </>
       )}
     </button>
