@@ -1,3 +1,4 @@
+import AddComment from "@/components/add-comment";
 import CommentsList from "@/components/comments-list";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
@@ -145,6 +146,7 @@ export default async function PostDetailPage({
       </div>
       <div className="flex flex-col items-start gap-5">
         <div>{post._count.comments} Comments</div>
+        <AddComment postId={id} />
         <CommentsList postId={id} />
       </div>
     </div>

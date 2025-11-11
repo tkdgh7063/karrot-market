@@ -13,6 +13,8 @@ export const TITLE_MAX_LENGTH = 50;
 export const DESCRIPTION_MIN_LENGTH = 10;
 export const DESCRIPTION_MAX_LENGTH = 500;
 
+export const COMMENT_MAX_LENGTH = 50;
+
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "Email is required",
   EMAIL_INVALID: "Please enter a valid email address",
@@ -53,6 +55,9 @@ export const ERROR_MESSAGES = {
   DESCRIPTION_TOO_LONG: "Description must be less than 500 characters",
 
   PHOTO_REQUIRED: "Photo is required",
+
+  COMMENT_REQUIRED: "Comment cannot be empty",
+  COMMENT_TOO_LONG: "Comment must be less than 50 characters",
 };
 
 export const HASH_ROUNDS = 12;

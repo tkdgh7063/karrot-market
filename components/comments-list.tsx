@@ -33,7 +33,7 @@ function getCachedComments(postId: number) {
     async () => getComments(postId),
     ["karrot", "post", "comments"],
     {
-      tags: [`post-commment-${postId}`],
+      tags: [`post-comments-${postId}`],
     },
   )();
 }
