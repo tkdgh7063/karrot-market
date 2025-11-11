@@ -1,46 +1,9 @@
-import db from "@/lib/db";
+import { Comment } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
-import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 
-async function getComments(postId: number) {
-  const comments = await db.comment.findMany({
-    where: {
-      postId,
-    },
-    select: {
-      id: true,
-      created_at: true,
-      payload: true,
-      user: {
-        select: {
-          avatar: true,
-          username: true,
-        },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
-
-  return comments;
-}
-
-function getCachedComments(postId: number) {
-  return nextCache(
-    async () => getComments(postId),
-    ["karrot", "post", "comments"],
-    {
-      tags: [`post-comments-${postId}`],
-    },
-  )();
-}
-
-export default async function CommentsList({ postId }: { postId: number }) {
-  const comments = await getCachedComments(postId);
-
+export default function CommentsList({ comments }: { comments: Comment[] }) {
   return (
     <div className="flex w-full flex-col gap-2">
       {comments.map((comment) => (

@@ -1,5 +1,4 @@
-import AddComment from "@/components/add-comment";
-import CommentsList from "@/components/comments-list";
+import CommentSection from "@/components/comment-section";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
 import { getSession } from "@/lib/session";
@@ -100,6 +99,39 @@ const getCachedViews = (postId: number) => {
   })();
 };
 
+async function getComments(postId: number) {
+  const comments = await db.comment.findMany({
+    where: {
+      postId,
+    },
+    select: {
+      id: true,
+      created_at: true,
+      payload: true,
+      user: {
+        select: {
+          avatar: true,
+          username: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+  return comments;
+}
+
+function getCachedComments(postId: number) {
+  return nextCache(
+    async () => getComments(postId),
+    ["karrot", "post", "comments"],
+    {
+      tags: [`post-comments-${postId}`],
+    },
+  )();
+}
+
 export default async function PostDetailPage({
   params,
 }: {
@@ -115,6 +147,8 @@ export default async function PostDetailPage({
   const { isLiked, likeCount } = await getCachedLikeStatus(id, userId);
 
   const views = (await getCachedViews(id))!.views;
+
+  const comments = await getCachedComments(id);
 
   return (
     <div className="p-5 text-white">
@@ -146,8 +180,7 @@ export default async function PostDetailPage({
       </div>
       <div className="flex flex-col items-start gap-5">
         <div>{post._count.comments} Comments</div>
-        <AddComment postId={id} />
-        <CommentsList postId={id} />
+        <CommentSection postId={id} comments={comments} />
       </div>
     </div>
   );
