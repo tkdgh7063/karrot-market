@@ -180,7 +180,7 @@ export default async function PostDetailPage({
       </div>
       <div className="flex flex-col items-start gap-5">
         <div>{post._count.comments} Comments</div>
-        <CommentSection postId={id} comments={comments} />
+        <CommentSection postId={id} comments={comments} user={post.user} />
       </div>
     </div>
   );

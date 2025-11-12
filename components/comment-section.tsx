@@ -1,6 +1,6 @@
 "use client";
 
-import { Comment } from "@/lib/types";
+import { Comment, User } from "@/lib/types";
 import { startTransition, useOptimistic } from "react";
 import AddComment from "./add-comment";
 import CommentsList from "./comments-list";
@@ -8,16 +8,18 @@ import CommentsList from "./comments-list";
 export default function CommentSection({
   postId,
   comments,
+  user,
 }: {
   postId: number;
   comments: Comment[];
+  user: User;
 }) {
   const [optimisticComments, addOptimisticComments] = useOptimistic(
     comments,
     (prevState: Comment[], newComment: Comment) => [newComment, ...prevState],
   );
 
-  const handleAddComment = async (newComment: Comment) => {
+  const handleAddComment = (newComment: Comment) => {
     startTransition(() => {
       addOptimisticComments(newComment);
     });
@@ -25,7 +27,7 @@ export default function CommentSection({
 
   return (
     <>
-      <AddComment postId={postId} action={handleAddComment} />
+      <AddComment postId={postId} action={handleAddComment} user={user} />
       <CommentsList comments={optimisticComments} />
     </>
   );

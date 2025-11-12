@@ -13,6 +13,7 @@ export const TITLE_MAX_LENGTH = 50;
 export const DESCRIPTION_MIN_LENGTH = 10;
 export const DESCRIPTION_MAX_LENGTH = 500;
 
+export const COMMENT_MIN_LENGTH = 1;
 export const COMMENT_MAX_LENGTH = 50;
 
 export const ERROR_MESSAGES = {
@@ -56,7 +57,7 @@ export const ERROR_MESSAGES = {
 
   PHOTO_REQUIRED: "Photo is required",
 
-  COMMENT_REQUIRED: "Comment cannot be empty",
+  COMMENT_REQUIRED: "Comment is required",
   COMMENT_TOO_LONG: "Comment must be less than 50 characters",
 };
 

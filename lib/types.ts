@@ -7,3 +7,8 @@ export interface Comment {
     username: string;
   };
 }
+
+export interface User {
+  username: string;
+  avatar: string | null;
+}
