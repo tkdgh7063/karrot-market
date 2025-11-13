@@ -27,7 +27,7 @@ export default function AddComment({
   const [payload, setPayload] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (payload.length < COMMENT_MIN_LENGTH) {
@@ -49,7 +49,7 @@ export default function AddComment({
     setPayload("");
     setErrors([]);
 
-    await addComment(postId, payload);
+    addComment(postId, payload);
   };
 
   return (

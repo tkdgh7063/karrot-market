@@ -29,14 +29,14 @@ export default function CommentSection({
     });
   };
 
-  const handleDeleteComment = async (commentId: number) => {
+  const handleDeleteComment = (commentId: number) => {
     startTransition(() => {
       setOptimisticComments(
         optimisticComments.filter((c) => c.id !== commentId),
       );
     });
 
-    await deleteComment(postId, commentId);
+    deleteComment(postId, commentId);
   };
 
   return (
