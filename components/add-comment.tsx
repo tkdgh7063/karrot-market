@@ -33,46 +33,53 @@ export default function AddComment({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (countRef.current >= COMMENT_LIMIT_COUNT) {
-      console.log("REFUSED");
       setPayload("");
       setErrors([ERROR_MESSAGES.COMMENT_LIMIT_REACHED]);
-    } else {
-      if (payload.length < COMMENT_MIN_LENGTH) {
-        setErrors([ERROR_MESSAGES.COMMENT_REQUIRED]);
-        return;
-      } else if (payload.length > COMMENT_MAX_LENGTH) {
-        setErrors([ERROR_MESSAGES.COMMENT_TOO_LONG]);
-        return;
-      }
-
-      const tempComment: Comment = {
-        id: Date.now(),
-        payload,
-        created_at: new Date(),
-        user,
-      };
-
-      action(tempComment);
-      countRef.current++;
-
-      setPayload("");
-      setErrors([]);
-
-      try {
-        await addComment(postId, user.username, payload);
-      } catch (e: any) {
-        console.log(e);
-        setErrors([e.message]);
-      }
-
-      if (!timerRef.current) {
-        timerRef.current = setTimeout(() => {
-          countRef.current = 0;
-          timerRef.current = null;
-        }, COMMENT_LIMIT_TIME);
-      }
+      console.log("REFUSED");
+      return;
     }
+
+    if (payload.length < COMMENT_MIN_LENGTH) {
+      setErrors([ERROR_MESSAGES.COMMENT_REQUIRED]);
+      return;
+    }
+
+    if (payload.length > COMMENT_MAX_LENGTH) {
+      setErrors([ERROR_MESSAGES.COMMENT_TOO_LONG]);
+      return;
+    }
+
+    const tempComment: Comment = {
+      id: Date.now(),
+      payload,
+      created_at: new Date(),
+      user,
+    };
+    action(tempComment);
+
+    countRef.current++;
+    resetCountAfterDelay();
+
+    setPayload("");
+    setErrors([]);
+
+    try {
+      await addComment(postId, user.username, payload);
+    } catch (e: any) {
+      console.error(e);
+      setErrors([e.message]);
+    }
+  };
+
+  const resetCountAfterDelay = () => {
+    if (timerRef.current) return;
+
+    timerRef.current = setTimeout(() => {
+      countRef.current = 0;
+      timerRef.current = null;
+    }, COMMENT_LIMIT_TIME);
   };
 
   return (
