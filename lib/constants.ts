@@ -10,8 +10,11 @@ export const USERNAME_MAX_LENGTH = 15;
 export const TITLE_MIN_LENGTH = 2;
 export const TITLE_MAX_LENGTH = 50;
 
-export const DESCRIPTION_MIN_LENGTH = 10;
-export const DESCRIPTION_MAX_LENGTH = 500;
+export const PRODUCT_DESCRIPTION_MIN_LENGTH = 10;
+export const PRODUCT_DESCRIPTION_MAX_LENGTH = 500;
+
+export const POST_DESCRIPTION_MIN_LENGTH = 2;
+export const POST_DESCRIPTION_MAX_LENGTH = 100;
 
 export const COMMENT_MIN_LENGTH = 1;
 export const COMMENT_MAX_LENGTH = 50;
@@ -54,8 +57,11 @@ export const ERROR_MESSAGES = {
   PRICE_NEGATIVE: "Price cannot be negative",
 
   DESCRIPTION_REQUIRED: "Description is required",
-  DESCRIPTION_TOO_SHORT: "Description must be at least 10 characters long",
-  DESCRIPTION_TOO_LONG: "Description must be less than 500 characters",
+  PRODUCT_DESCRIPTION_TOO_SHORT:
+    "Description must be at least 10 characters long",
+  PRODUCT_DESCRIPTION_TOO_LONG: "Description must be less than 500 characters",
+  POST_DESCRIPTION_TOO_SHORT: "Description must be at least 2 characters long",
+  POST_DESCRIPTION_TOO_LONG: "Description must be less than 100 characters",
 
   PHOTO_REQUIRED: "Photo is required",
 
