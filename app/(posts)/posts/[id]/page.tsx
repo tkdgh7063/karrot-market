@@ -125,7 +125,7 @@ async function getComments(postId: number) {
 function getCachedComments(postId: number) {
   return nextCache(
     async () => getComments(postId),
-    ["karrot", "post", "comments"],
+    ["karrot", "post", "comments", postId.toString()],
     {
       tags: [`post-comments-${postId}`],
     },
