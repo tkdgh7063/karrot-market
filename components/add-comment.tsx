@@ -2,12 +2,14 @@
 
 import { addComment } from "@/app/(posts)/posts/[id]/actions";
 import {
+  COMMENT_LIMIT_COUNT,
+  COMMENT_LIMIT_TIME,
   COMMENT_MAX_LENGTH,
   COMMENT_MIN_LENGTH,
   ERROR_MESSAGES,
 } from "@/lib/constants";
 import { Comment } from "@/lib/types";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Input from "./input";
 
 interface User {
@@ -27,29 +29,45 @@ export default function AddComment({
   const [payload, setPayload] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
 
+  const countRef = useRef(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (countRef.current >= COMMENT_LIMIT_COUNT) {
+      console.log("REFUSED");
+      setPayload("");
+      setErrors([ERROR_MESSAGES.COMMENT_LIMIT_REACHED]);
+    } else {
+      if (payload.length < COMMENT_MIN_LENGTH) {
+        setErrors([ERROR_MESSAGES.COMMENT_REQUIRED]);
+        return;
+      } else if (payload.length > COMMENT_MAX_LENGTH) {
+        setErrors([ERROR_MESSAGES.COMMENT_TOO_LONG]);
+        return;
+      }
 
-    if (payload.length < COMMENT_MIN_LENGTH) {
-      setErrors([ERROR_MESSAGES.COMMENT_REQUIRED]);
-      return;
-    } else if (payload.length > COMMENT_MAX_LENGTH) {
-      setErrors([ERROR_MESSAGES.COMMENT_TOO_LONG]);
-      return;
+      const tempComment: Comment = {
+        id: Date.now(),
+        payload,
+        created_at: new Date(),
+        user,
+      };
+
+      action(tempComment);
+      countRef.current++;
+
+      setPayload("");
+      setErrors([]);
+
+      addComment(postId, payload);
+
+      if (!timerRef.current) {
+        timerRef.current = setTimeout(() => {
+          countRef.current = 0;
+          timerRef.current = null;
+        }, COMMENT_LIMIT_TIME);
+      }
     }
-
-    const tempComment: Comment = {
-      id: Date.now(),
-      payload,
-      created_at: new Date(),
-      user,
-    };
-
-    action(tempComment);
-    setPayload("");
-    setErrors([]);
-
-    addComment(postId, payload);
   };
 
   return (

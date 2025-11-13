@@ -15,6 +15,8 @@ export const DESCRIPTION_MAX_LENGTH = 500;
 
 export const COMMENT_MIN_LENGTH = 1;
 export const COMMENT_MAX_LENGTH = 50;
+export const COMMENT_LIMIT_COUNT = 3;
+export const COMMENT_LIMIT_TIME = 5 * 60 * 1000; // 5 minutes
 
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "Email is required",
@@ -59,6 +61,8 @@ export const ERROR_MESSAGES = {
 
   COMMENT_REQUIRED: "Comment is required",
   COMMENT_TOO_LONG: "Comment must be less than 50 characters",
+
+  COMMENT_LIMIT_REACHED: "Oops! You can only post 3 comments in 5 minutes.",
 };
 
 export const HASH_ROUNDS = 12;
