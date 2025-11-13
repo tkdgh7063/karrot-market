@@ -1,3 +1,4 @@
+import AddIconBtn from "@/components/add-icon-btn";
 import ProductList from "@/components/product-list";
 import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -46,12 +47,7 @@ export default async function Products() {
       <form action={revalidate}>
         <button>Revalidate</button>
       </form>
-      <Link
-        href="/add-products"
-        className="fixed right-4 bottom-25 flex size-14 items-center justify-center rounded-2xl bg-orange-500 text-white transition-colors hover:bg-orange-400"
-      >
-        <PlusIcon className="size-12" />
-      </Link>
+      <AddIconBtn href={`/add-products`} />
     </div>
   );
 }

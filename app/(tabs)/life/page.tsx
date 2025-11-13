@@ -1,3 +1,4 @@
+import AddIconBtn from "@/components/add-icon-btn";
 import db from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import {
@@ -77,6 +78,7 @@ export default async function Life() {
           </div>
         </Link>
       ))}
+      <AddIconBtn href={`/add-posts`} />
     </div>
   );
 }
