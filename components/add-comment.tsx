@@ -31,7 +31,7 @@ export default function AddComment({
 
   const countRef = useRef(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (countRef.current >= COMMENT_LIMIT_COUNT) {
       console.log("REFUSED");
@@ -59,7 +59,12 @@ export default function AddComment({
       setPayload("");
       setErrors([]);
 
-      addComment(postId, payload);
+      try {
+        await addComment(postId, user.username, payload);
+      } catch (e: any) {
+        console.log(e);
+        setErrors([e.message]);
+      }
 
       if (!timerRef.current) {
         timerRef.current = setTimeout(() => {
