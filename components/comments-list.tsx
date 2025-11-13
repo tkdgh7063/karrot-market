@@ -1,7 +1,7 @@
 import { Comment } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import CommentDate from "./comment-date";
 
 export default function CommentsList({ comments }: { comments: Comment[] }) {
   return (
@@ -32,7 +32,7 @@ export default function CommentsList({ comments }: { comments: Comment[] }) {
               <div className="text-sm">{comment.user.username}</div>
             </div>
           </div>
-          <div className="text-sm">{formatDate(comment.created_at)}</div>
+          <CommentDate date={comment.created_at} />
         </div>
       ))}
     </div>
