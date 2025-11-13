@@ -61,7 +61,20 @@ export async function addComment(postId: number, payload: string) {
     },
   });
 
-  revalidateTag(`post-comments-${postId}`);
+  if (comment) revalidateTag(`post-comments-${postId}`);
+
+  return comment;
+}
+
+export async function deleteComment(postId: number, commentId: number) {
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
+  const comment = await db.comment.delete({
+    where: {
+      id: commentId,
+    },
+  });
+
+  if (comment) revalidateTag(`post-comments-${postId}`);
 
   return comment;
 }

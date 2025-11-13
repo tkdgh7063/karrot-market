@@ -7,7 +7,7 @@ import {
   ERROR_MESSAGES,
 } from "@/lib/constants";
 import { Comment } from "@/lib/types";
-import React, { startTransition, useState } from "react";
+import React, { useState } from "react";
 import Input from "./input";
 
 interface User {

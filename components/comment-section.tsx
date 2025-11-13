@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteComment } from "@/app/(posts)/posts/[id]/actions";
 import { Comment, User } from "@/lib/types";
 import { startTransition, useOptimistic } from "react";
 import AddComment from "./add-comment";
@@ -14,21 +15,38 @@ export default function CommentSection({
   comments: Comment[];
   user: User;
 }) {
-  const [optimisticComments, addOptimisticComments] = useOptimistic(
+  const [optimisticComments, setOptimisticComments] = useOptimistic(
     comments,
-    (prevState: Comment[], newComment: Comment) => [newComment, ...prevState],
+    (prevState: Comment[], newState: Comment[] | Comment) => {
+      if (Array.isArray(newState)) return newState;
+      return [newState, ...prevState];
+    },
   );
 
   const handleAddComment = (newComment: Comment) => {
     startTransition(() => {
-      addOptimisticComments(newComment);
+      setOptimisticComments(newComment);
     });
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    startTransition(() => {
+      setOptimisticComments(
+        optimisticComments.filter((c) => c.id !== commentId),
+      );
+    });
+
+    await deleteComment(postId, commentId);
   };
 
   return (
     <>
       <AddComment postId={postId} action={handleAddComment} user={user} />
-      <CommentsList comments={optimisticComments} />
+      <CommentsList
+        comments={optimisticComments}
+        username={user.username}
+        action={handleDeleteComment}
+      />
     </>
   );
 }
