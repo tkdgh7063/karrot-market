@@ -49,10 +49,7 @@ export default function AddComment({
     setPayload("");
     setErrors([]);
 
-    startTransition(async () => {
-      const createdComment = await addComment(postId, payload);
-      action(createdComment);
-    });
+    await addComment(postId, payload);
   };
 
   return (
