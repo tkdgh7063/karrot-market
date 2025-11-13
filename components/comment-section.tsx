@@ -41,6 +41,7 @@ export default function CommentSection({
 
   return (
     <>
+      <div>{optimisticComments.length} Comments</div>
       <AddComment postId={postId} action={handleAddComment} user={user} />
       <CommentsList
         comments={optimisticComments}
