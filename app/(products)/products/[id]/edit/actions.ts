@@ -82,7 +82,13 @@ export async function updateProduct(_: any, formData: FormData) {
   } else {
     const updatedProduct = await db.product.update({
       where: { id: Number(formData.get("id")) },
-      data: results.data,
+      data: {
+        title: results.data.title,
+        price: results.data.price,
+        description: results.data.description,
+        photo: results.data.photo,
+        edited: true,
+      },
     });
 
     revalidatePath("/products");
