@@ -77,10 +77,14 @@ async function getViews(postId: number) {
 }
 
 const getCachedPost = (postId: number) => {
-  return nextCache(async () => getPost(postId), ["karrot", "post", "detail"], {
-    revalidate: 60,
-    tags: [`post-detail-${postId}`],
-  })();
+  return nextCache(
+    async () => getPost(postId),
+    ["karrot", "post", "detail", postId.toString()],
+    {
+      revalidate: 60,
+      tags: [`post-detail-${postId}`],
+    },
+  )();
 };
 
 const getCachedLikeStatus = (postId: number, userId: number) => {
