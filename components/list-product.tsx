@@ -1,5 +1,5 @@
 import { BASE_PHOTO } from "@/lib/constants";
-import { formatDate, formatToWon } from "@/lib/utils";
+import { formatToWon } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import FormattedDate from "./formatted-date";

@@ -1,7 +1,6 @@
 import AddIconBtn from "@/components/add-icon-btn";
 import FormattedDate from "@/components/formatted-date";
 import db from "@/lib/db";
-import { formatDate } from "@/lib/utils";
 import {
   ChatBubbleOvalLeftIcon,
   EyeIcon,
