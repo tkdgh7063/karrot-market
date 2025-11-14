@@ -3,7 +3,7 @@ import DeletePostForm from "@/components/delete-post-form";
 import FormattedDate from "@/components/formatted-date";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId } from "@/lib/session";
 import { EyeIcon, UserIcon } from "@heroicons/react/24/solid";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
@@ -151,10 +151,10 @@ export default async function PostDetailPage({
   const post = await getCachedPost(id);
   if (!post) return notFound();
 
-  const userId = (await getSession()).id!;
-  const isOwner = userId === post.userId;
+  const loggedInUserId = await getLoggedInUserId();
+  const isOwner = loggedInUserId === post.userId;
 
-  const { isLiked, likeCount } = await getCachedLikeStatus(id, userId);
+  const { isLiked, likeCount } = await getCachedLikeStatus(id, loggedInUserId);
 
   const views = (await getCachedViews(id))!.views;
 

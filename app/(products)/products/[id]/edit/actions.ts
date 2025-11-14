@@ -8,7 +8,7 @@ import {
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId } from "@/lib/session";
 import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -46,15 +46,15 @@ const productSchema = z.object({
 });
 
 export async function updateProduct(_: any, formData: FormData) {
-  const session = await getSession();
-  if (!session.id) return redirect("/login");
+  const loggedInUserId = await getLoggedInUserId();
+  if (!loggedInUserId) return redirect("/login");
 
   const id = Number(formData.get("id"));
   if (!id) return redirect("/products");
 
   const product = await db.product.findUnique({ where: { id } });
   if (!product) return redirect("/products");
-  if (product.userId !== session.id) return redirect("/products");
+  if (product.userId !== loggedInUserId) return redirect("/products");
 
   let photo = formData.get("photo");
   if (photo instanceof File && photo.size > 0 && photo.name) {
@@ -99,8 +99,8 @@ export async function updateProduct(_: any, formData: FormData) {
 }
 
 export async function deleteProduct(formData: FormData) {
-  const session = await getSession();
-  if (!session.id) return redirect("/login");
+  const loggedInUserId = await getLoggedInUserId();
+  if (!loggedInUserId) return redirect("/login");
 
   const id = Number(formData.get("id"));
   if (Number.isNaN(id)) return redirect("/products");
@@ -108,7 +108,7 @@ export async function deleteProduct(formData: FormData) {
   const product = await db.product.findUnique({ where: { id } });
   if (!product) return redirect("/products");
 
-  if (product.userId !== session.id) return redirect("/products");
+  if (product.userId !== loggedInUserId) return redirect("/products");
 
   await fs.unlink(`./public/${product.photo}`);
   await db.product.delete({ where: { id } });

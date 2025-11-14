@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "./lib/session";
+import { getLoggedInUserId } from "./lib/session";
 
 const publicOnlyURLs = new Set([
   "/",
@@ -11,7 +11,7 @@ const publicOnlyURLs = new Set([
 ]);
 
 export async function middleware(request: NextRequest) {
-  const isLoggedIn = Boolean((await getSession()).id);
+  const isLoggedIn = Boolean(getLoggedInUserId);
   const isPublic = publicOnlyURLs.has(request.nextUrl.pathname);
   if (isLoggedIn && isPublic) {
     return NextResponse.redirect(new URL("/profile", request.url));

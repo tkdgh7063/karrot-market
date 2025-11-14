@@ -1,6 +1,6 @@
 import ProductDetail from "@/components/product-detail";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getIsOwner } from "@/lib/session";
 import { Metadata } from "next";
 import { unstable_cache as nextCache } from "next/cache";
 import { notFound } from "next/navigation";
@@ -49,12 +49,6 @@ export async function generateMetadata({
   return {
     title: product?.title,
   };
-}
-
-async function getIsOwner(userId: number) {
-  const session = await getSession();
-  if (session.id) return Boolean(session.id === userId);
-  return false;
 }
 
 export default async function ProductDetailPage({

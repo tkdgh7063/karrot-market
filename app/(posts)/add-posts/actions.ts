@@ -8,7 +8,7 @@ import {
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId } from "@/lib/session";
 import { redirect } from "next/navigation";
 import z from "zod";
 
@@ -36,14 +36,14 @@ export async function uploadNewPost(_: any, formData: FormData) {
   if (!results.success) {
     return z.flattenError(results.error);
   } else {
-    const session = await getSession();
+    const userId = await getLoggedInUserId();
     const post = await db.post.create({
       data: {
         title: results.data.title,
         description: results.data.description,
         user: {
           connect: {
-            id: session.id,
+            id: userId,
           },
         },
       },
@@ -53,8 +53,10 @@ export async function uploadNewPost(_: any, formData: FormData) {
     });
 
     if (post) {
-      // revalidate when post is cached data
+      // Currently posts list is not cached, so revalidatePath is not needed.
+      // Uncomment if caching the list in the future.
       // revalidatePath("/posts");
+
       return redirect("/life");
     }
   }

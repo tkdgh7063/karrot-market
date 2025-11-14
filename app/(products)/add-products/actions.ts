@@ -8,7 +8,7 @@ import {
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId } from "@/lib/session";
 import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -64,8 +64,8 @@ export async function uploadNewProduct(_: any, formData: FormData) {
   if (!results.success) {
     return z.flattenError(results.error);
   } else {
-    const session = await getSession();
-    if (session.id) {
+    const loggedInUserId = await getLoggedInUserId();
+    if (loggedInUserId) {
       const product = await db.product.create({
         data: {
           title: results.data.title,
@@ -74,7 +74,7 @@ export async function uploadNewProduct(_: any, formData: FormData) {
           photo: results.data.photo,
           user: {
             connect: {
-              id: session.id,
+              id: loggedInUserId,
             },
           },
         },

@@ -1,13 +1,13 @@
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId, logoutUser } from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
 
 async function getUser() {
-  const session = await getSession();
-  if (session.id) {
+  const loggedInUserId = await getLoggedInUserId();
+  if (loggedInUserId) {
     const user = await db.user.findUnique({
       where: {
-        id: session.id,
+        id: loggedInUserId,
       },
     });
     if (user) {
@@ -21,8 +21,7 @@ async function getUser() {
 export default async function Profile() {
   const logout = async () => {
     "use server";
-    const session = await getSession();
-    session.destroy();
+    await logoutUser();
     return redirect("/");
   };
   const user = await getUser();

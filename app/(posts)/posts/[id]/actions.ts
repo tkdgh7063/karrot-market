@@ -7,14 +7,14 @@ import {
   ERROR_MESSAGES,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getLoggedInUserId } from "@/lib/session";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function likePost(postId: number) {
   // await new Promise((resolve) => setTimeout(resolve, 5000));
   try {
-    const userId = (await getSession()).id!;
+    const userId = await getLoggedInUserId();
     await db.like.create({
       data: {
         userId,
@@ -28,7 +28,7 @@ export async function likePost(postId: number) {
 export async function dislikePost(postId: number) {
   // await new Promise((resolve) => setTimeout(resolve, 5000));
   try {
-    const userId = (await getSession()).id!;
+    const userId = await getLoggedInUserId();
     await db.like.delete({
       where: {
         id: {
@@ -65,10 +65,11 @@ export async function addComment(
   if (recentCount >= COMMENT_LIMIT_COUNT)
     throw new Error(ERROR_MESSAGES.COMMENT_LIMIT_REACHED);
 
+  const userId = await getLoggedInUserId();
   const comment = await db.comment.create({
     data: {
       postId,
-      userId: (await getSession()).id!,
+      userId,
       payload,
     },
     select: {
@@ -113,6 +114,7 @@ export async function deletePost(_: any, formData: FormData) {
   if (post) {
     revalidateTag(`post-${id}`);
     revalidatePath("/life");
+
     return redirect("/life");
   }
 }
