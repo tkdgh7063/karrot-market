@@ -41,11 +41,7 @@ export default function CommentsList({
                 <div className="text-sm">{comment.user.username}</div>
               </div>
             </div>
-            <FormattedDate
-              date={comment.created_at}
-              className="text-sm"
-              edited={comment.edited}
-            />
+            <FormattedDate date={comment.created_at} className="text-sm" />
           </div>
           {username === comment.user.username && (
             <XMarkIcon

@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/utils";
 
 interface Props {
   date: Date;
-  edited: boolean;
+  edited?: boolean;
   className?: string;
 }
 

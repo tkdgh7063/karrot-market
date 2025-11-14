@@ -86,7 +86,6 @@ model Comment {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  edited     Boolean  @default(false)
 
   user   User @relation(fields: [userId], references: [id])
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
