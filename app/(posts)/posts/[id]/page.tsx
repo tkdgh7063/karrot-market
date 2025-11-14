@@ -1,4 +1,5 @@
 import CommentSection from "@/components/comment-section";
+import DeletePostForm from "@/components/delete-post-form";
 import FormattedDate from "@/components/formatted-date";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
@@ -77,33 +78,6 @@ async function getViews(postId: number) {
   return views;
 }
 
-const getCachedPost = (postId: number) => {
-  return nextCache(
-    async () => getPost(postId),
-    ["karrot", "post", "detail", postId.toString()],
-    {
-      revalidate: 60,
-      tags: [`post-detail-${postId}`],
-    },
-  )();
-};
-
-const getCachedLikeStatus = (postId: number, userId: number) => {
-  return nextCache(
-    async () => getLikeStatus(postId, userId),
-    ["karrot", "post", "like-status"],
-    {
-      tags: [`like-status-${postId}`],
-    },
-  )();
-};
-
-const getCachedViews = (postId: number) => {
-  return nextCache(async () => getViews(postId), ["karrot", "post", "views"], {
-    revalidate: 5,
-  })();
-};
-
 async function getComments(postId: number) {
   const comments = await db.comment.findMany({
     where: {
@@ -128,12 +102,40 @@ async function getComments(postId: number) {
   return comments;
 }
 
+const getCachedPost = (postId: number) => {
+  return nextCache(
+    async () => getPost(postId),
+    ["karrot", "post", "detail", postId.toString()],
+    {
+      revalidate: 60,
+      tags: [`post-${postId}`, `post-detail-${postId}`],
+    },
+  )();
+};
+
+const getCachedLikeStatus = (postId: number, userId: number) => {
+  return nextCache(
+    async () => getLikeStatus(postId, userId),
+    ["karrot", "post", "like-status"],
+    {
+      tags: [`post-${postId}`, `like-status-${postId}`],
+    },
+  )();
+};
+
+const getCachedViews = (postId: number) => {
+  return nextCache(async () => getViews(postId), ["karrot", "post", "views"], {
+    revalidate: 5,
+    tags: [`post-${postId}`],
+  })();
+};
+
 function getCachedComments(postId: number) {
   return nextCache(
     async () => getComments(postId),
     ["karrot", "post", "comments", postId.toString()],
     {
-      tags: [`post-comments-${postId}`],
+      tags: [`post-${postId}`, `post-comments-${postId}`],
     },
   )();
 }
@@ -150,6 +152,8 @@ export default async function PostDetailPage({
   if (!post) return notFound();
 
   const userId = (await getSession()).id!;
+  const isOwner = userId === post.userId;
+
   const { isLiked, likeCount } = await getCachedLikeStatus(id, userId);
 
   const views = (await getCachedViews(id))!.views;
@@ -190,7 +194,11 @@ export default async function PostDetailPage({
             {views} {views === 1 ? "view" : "views"}
           </span>
         </div>
-        <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
+        {isOwner ? (
+          <DeletePostForm postId={id} />
+        ) : (
+          <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
+        )}
       </div>
       <div className="flex flex-col items-start gap-5">
         <CommentSection postId={id} comments={comments} user={post.user} />
