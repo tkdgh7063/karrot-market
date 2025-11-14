@@ -102,6 +102,20 @@ async function getComments(postId: number) {
   return comments;
 }
 
+async function getUser(userId: number) {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      username: true,
+      avatar: true,
+    },
+  });
+
+  return user;
+}
+
 const getCachedPost = (postId: number) => {
   return nextCache(
     async () => getPost(postId),
@@ -154,6 +168,8 @@ export default async function PostDetailPage({
   const loggedInUserId = await getLoggedInUserId();
   const isOwner = loggedInUserId === post.userId;
 
+  const loggedInUser = (await getUser(loggedInUserId))!;
+
   const { isLiked, likeCount } = await getCachedLikeStatus(id, loggedInUserId);
 
   const views = (await getCachedViews(id))!.views;
@@ -201,7 +217,7 @@ export default async function PostDetailPage({
         )}
       </div>
       <div className="flex flex-col items-start gap-5">
-        <CommentSection postId={id} comments={comments} user={post.user} />
+        <CommentSection postId={id} comments={comments} user={loggedInUser} />
       </div>
     </div>
   );
