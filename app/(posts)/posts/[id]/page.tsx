@@ -198,3 +198,14 @@ export default async function PostDetailPage({
     </div>
   );
 }
+
+export const dynamicParams = true;
+
+export const generateStaticParams = async () => {
+  const posts = await db.post.findMany({
+    select: {
+      id: true,
+    },
+  });
+  return posts.map((post) => ({ id: post.id.toString() }));
+};
