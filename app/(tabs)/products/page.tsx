@@ -1,11 +1,9 @@
 import AddIconBtn from "@/components/add-icon-btn";
 import ProductList from "@/components/product-list";
 import db from "@/lib/db";
-import { PlusIcon } from "@heroicons/react/24/solid";
 import { PromiseReturnType } from "@prisma/client";
 import type { Metadata } from "next";
 import { unstable_cache as nextCache, revalidatePath } from "next/cache";
-import Link from "next/link";
 
 const getCachedproducts = nextCache(getInitialProducts, ["karrot", "products"]);
 
@@ -16,6 +14,7 @@ async function getInitialProducts() {
       photo: true,
       price: true,
       created_at: true,
+      edited: true,
       id: true,
     },
     orderBy: {

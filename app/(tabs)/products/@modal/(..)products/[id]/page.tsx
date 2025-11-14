@@ -1,4 +1,5 @@
 import ExitButton from "@/components/exit-btn";
+import FormattedDate from "@/components/formatted-date";
 import db from "@/lib/db";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
@@ -25,6 +26,8 @@ export default async function ProductModal({
       price: true,
       photo: true,
       user: true,
+      created_at: true,
+      edited: true,
     },
   });
   if (!product) {
@@ -56,7 +59,14 @@ export default async function ProductModal({
               <UserIcon />
             )}
           </div>
-          <h3>{product.user.username}</h3>
+          <div>
+            <h3>{product.user.username}</h3>
+            <FormattedDate
+              date={product.created_at}
+              className="text-sm"
+              edited={product.edited}
+            />
+          </div>
         </div>
         <div className="flex w-2/3 flex-col gap-3">
           <div className="flex items-end gap-2">

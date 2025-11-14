@@ -1,9 +1,9 @@
 import CommentSection from "@/components/comment-section";
+import FormattedDate from "@/components/formatted-date";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { formatDate } from "@/lib/utils";
-import { EyeIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, UserIcon } from "@heroicons/react/24/solid";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -24,6 +24,7 @@ async function getPost(postId: number) {
         description: true,
         created_at: true,
         updated_at: true,
+        edited: true,
         _count: {
           select: {
             comments: true,
@@ -112,6 +113,7 @@ async function getComments(postId: number) {
       id: true,
       created_at: true,
       payload: true,
+      edited: true,
       user: {
         select: {
           avatar: true,
@@ -157,17 +159,25 @@ export default async function PostDetailPage({
   return (
     <div className="p-5 text-white">
       <div className="mb-2 flex items-center gap-2">
-        <Image
-          src={post.user.avatar ?? ""}
-          width={28}
-          height={28}
-          alt={post.user.username}
-          className="size-7 overflow-hidden rounded-full"
-        />
+        {post.user.avatar !== null ? (
+          <Image
+            src={post.user.avatar}
+            width={28}
+            height={28}
+            alt={post.user.username}
+            className="size-7 overflow-hidden rounded-full"
+          />
+        ) : (
+          <UserIcon className="size-7" />
+        )}
         <div>
           <span className="text-md font-semibold">{post.user.username}</span>
-          <div className="text-sm">
-            <span>{formatDate(post.created_at)}</span>
+          <div>
+            <FormattedDate
+              date={post.created_at}
+              className="text-sm"
+              edited={post.edited}
+            />
           </div>
         </div>
       </div>

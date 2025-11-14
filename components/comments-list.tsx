@@ -1,7 +1,7 @@
 import { Comment } from "@/lib/types";
 import { UserIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import CommentDate from "./comment-date";
+import FormattedDate from "./formatted-date";
 
 export default function CommentsList({
   comments,
@@ -41,7 +41,11 @@ export default function CommentsList({
                 <div className="text-sm">{comment.user.username}</div>
               </div>
             </div>
-            <CommentDate date={comment.created_at} />
+            <FormattedDate
+              date={comment.created_at}
+              className="text-sm"
+              edited={comment.edited}
+            />
           </div>
           {username === comment.user.username && (
             <XMarkIcon

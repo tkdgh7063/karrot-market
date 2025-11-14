@@ -2,12 +2,14 @@ import { BASE_PHOTO } from "@/lib/constants";
 import { formatDate, formatToWon } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import FormattedDate from "./formatted-date";
 
 interface ListProductProps {
   title: string;
   photo: string | null;
   price: number;
   created_at: Date;
+  edited: boolean;
   id: number;
 }
 
@@ -16,6 +18,7 @@ export default function ListProduct({
   photo,
   price,
   created_at,
+  edited,
   id,
 }: ListProductProps) {
   return (
@@ -32,9 +35,11 @@ export default function ListProduct({
       <div className="flex flex-col gap-1 *:text-white">
         <span className="text-lg">{title}</span>
         <span className="text-lg font-semibold">{formatToWon(price)} Won</span>
-        <span className="text-sm text-neutral-500">
-          {formatDate(created_at)}
-        </span>
+        <FormattedDate
+          date={created_at}
+          className="text-sm text-neutral-500"
+          edited={edited}
+        />
       </div>
     </Link>
   );

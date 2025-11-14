@@ -1,4 +1,5 @@
 import AddIconBtn from "@/components/add-icon-btn";
+import FormattedDate from "@/components/formatted-date";
 import db from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import {
@@ -24,6 +25,7 @@ async function getPosts() {
         },
       },
       _count: true,
+      edited: true,
     },
     orderBy: {
       created_at: "desc",
@@ -52,13 +54,11 @@ export default async function Life() {
           <p>{post.description}</p>
           <div className="flex items-center justify-between text-sm *:flex *:items-center">
             <div className="gap-2">
-              {post.created_at.getTime() === post.updated_at.getTime() ? (
-                <span>{formatDate(post.created_at)}</span>
-              ) : (
-                <span>
-                  {formatDate(post.created_at)} <span>(edited)</span>
-                </span>
-              )}
+              <FormattedDate
+                date={post.created_at}
+                className="text-sm"
+                edited={post.edited}
+              />
               <span>·</span>
               <span className="flex items-center gap-1">
                 <EyeIcon className="size-5" />

@@ -10,6 +10,7 @@ export async function fetchMoreProducts(page: number) {
       photo: true,
       price: true,
       created_at: true,
+      edited: true,
       id: true,
     },
     take: PRODUCTS_PER_PAGE,

@@ -2,15 +2,19 @@ import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
+import FormattedDate from "./formatted-date";
 
 interface ProductDetailProps {
   product: {
     id: number;
     title: string;
     description: string;
+    created_at: Date;
+    updated_at: Date;
+    edited: boolean;
+    userId: number;
     price: number;
     photo: string;
-    userId: number;
     user: {
       username: string;
       avatar: string | null;
@@ -47,7 +51,14 @@ export default function ProductDetail({
           )}
         </div>
         <div>
-          <h3>{product.user.username}</h3>
+          <span className="text-semibold text-md">{product.user.username}</span>
+          <div>
+            <FormattedDate
+              date={product.created_at}
+              className="text-sm"
+              edited={product.edited}
+            />
+          </div>
         </div>
       </div>
       <div className="p-5">
