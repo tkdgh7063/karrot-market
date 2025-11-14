@@ -87,7 +87,6 @@ async function getComments(postId: number) {
       id: true,
       created_at: true,
       payload: true,
-      edited: true,
       user: {
         select: {
           avatar: true,
