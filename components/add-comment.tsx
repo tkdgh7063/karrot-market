@@ -8,14 +8,9 @@ import {
   COMMENT_MIN_LENGTH,
   ERROR_MESSAGES,
 } from "@/lib/constants";
-import { Comment } from "@/lib/types";
+import { Comment, User } from "@/lib/types";
 import React, { useRef, useState } from "react";
 import Input from "./input";
-
-interface User {
-  username: string;
-  avatar: string | null;
-}
 
 export default function AddComment({
   postId,
