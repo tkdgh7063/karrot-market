@@ -61,7 +61,7 @@ export default function ProductDetail({
           </div>
         </div>
       </div>
-      <div className="p-5">
+      <div className="flex flex-col gap-1 p-5">
         <h1 className="text-2xl font-semibold">{product.title}</h1>
         <p>{product.description}</p>
       </div>
