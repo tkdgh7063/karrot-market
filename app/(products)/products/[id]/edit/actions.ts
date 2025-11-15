@@ -103,7 +103,7 @@ export async function deleteProduct(formData: FormData) {
   if (!loggedInUserId) return redirect("/login");
 
   const id = Number(formData.get("id"));
-  if (Number.isNaN(id)) return redirect("/products");
+  if (!id || isNaN(id)) return redirect("/products");
 
   const product = await db.product.findUnique({ where: { id } });
   if (!product) return redirect("/products");

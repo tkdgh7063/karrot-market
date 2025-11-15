@@ -1,4 +1,3 @@
-import DeletePostForm from "@/components/delete-post-form";
 import EditPostForm from "@/components/edit-post-form";
 import db from "@/lib/db";
 import { PromiseReturnType } from "@prisma/client";
@@ -32,10 +31,5 @@ export default async function EditPost({
   const post = await getPost(id);
   if (!post) return notFound();
 
-  return (
-    <div className="">
-      <EditPostForm key={post.id} post={post} />
-      <DeletePostForm postId={post.id} />
-    </div>
-  );
+  return <EditPostForm key={post.id} post={post} />;
 }

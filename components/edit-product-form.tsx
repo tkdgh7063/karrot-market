@@ -29,7 +29,7 @@ export default function EditProductForm({ product }: { product: Product }) {
   };
 
   return (
-    <div className="">
+    <>
       <form action={action} className="flex flex-col gap-5 p-5">
         <h1 className="text-2xl">Edit Product</h1>
         <input type="hidden" name="id" value={product.id} />
@@ -38,7 +38,7 @@ export default function EditProductForm({ product }: { product: Product }) {
           placeholder="Title"
           type="text"
           defaultValue={product.title}
-          errors={[]}
+          errors={state?.fieldErrors.title}
           required
         />
         <Input
@@ -52,7 +52,7 @@ export default function EditProductForm({ product }: { product: Product }) {
             e.target.value = value.toString();
           }}
           defaultValue={product.price}
-          errors={[]}
+          errors={state?.fieldErrors.price}
           required
         />
         <Input
@@ -60,7 +60,7 @@ export default function EditProductForm({ product }: { product: Product }) {
           placeholder="Description"
           type="text"
           defaultValue={product.description}
-          errors={[]}
+          errors={state?.fieldErrors.description}
           required
         />
         <label
@@ -73,7 +73,7 @@ export default function EditProductForm({ product }: { product: Product }) {
               <PhotoIcon className="h-32" />
               <div className="text-lg font-semibold">
                 Upload a photo
-                {""}
+                {state?.fieldErrors.photo}
               </div>
             </>
           )}
@@ -94,6 +94,6 @@ export default function EditProductForm({ product }: { product: Product }) {
           Delete Product
         </button>
       </form>
-    </div>
+    </>
   );
 }

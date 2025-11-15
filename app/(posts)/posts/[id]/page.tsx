@@ -1,5 +1,4 @@
 import CommentSection from "@/components/comment-section";
-import DeletePostForm from "@/components/delete-post-form";
 import FormattedDate from "@/components/formatted-date";
 import LikeButton from "@/components/like-button";
 import db from "@/lib/db";

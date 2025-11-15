@@ -64,17 +64,25 @@ export async function updatePost(_: any, formData: FormData) {
 }
 
 export async function deletePost(formData: FormData) {
-  const id = Number(formData.get("postId"));
-  const post = await db.post.delete({
+  const loggedInUserId = await getLoggedInUserId();
+  if (!loggedInUserId) return redirect("/login");
+
+  const id = Number(formData.get("id"));
+  if (!id || isNaN(id)) return redirect("/life");
+
+  const post = await db.post.findUnique({
     where: {
       id,
     },
   });
+  if (!post) return redirect("/life");
 
-  if (post) {
-    revalidateTag(`post-${id}`);
-    revalidatePath("/life");
+  if (post.userId !== loggedInUserId) return redirect("/life");
 
-    return redirect("/life");
-  }
+  await db.post.delete({ where: { id } });
+
+  revalidateTag(`post-${id}`);
+  revalidatePath("/life");
+
+  return redirect("/life");
 }
