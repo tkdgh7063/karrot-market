@@ -9,7 +9,7 @@ import {
 } from "@/lib/constants";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import z from "zod";
 
@@ -60,5 +60,21 @@ export async function updatePost(_: any, formData: FormData) {
     revalidateTag(`post-detail-${updatedPost.id}`);
 
     return redirect(`/posts/${updatedPost.id}`);
+  }
+}
+
+export async function deletePost(formData: FormData) {
+  const id = Number(formData.get("postId"));
+  const post = await db.post.delete({
+    where: {
+      id,
+    },
+  });
+
+  if (post) {
+    revalidateTag(`post-${id}`);
+    revalidatePath("/life");
+
+    return redirect("/life");
   }
 }

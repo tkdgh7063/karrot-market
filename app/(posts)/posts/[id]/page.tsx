@@ -7,6 +7,7 @@ import { getLoggedInUserId } from "@/lib/session";
 import { EyeIcon, UserIcon } from "@heroicons/react/24/solid";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 async function getPost(postId: number) {
@@ -210,7 +211,12 @@ export default async function PostDetailPage({
           </span>
         </div>
         {isOwner ? (
-          <DeletePostForm postId={id} />
+          <Link
+            className="rounded-md bg-orange-500 px-2 py-1.5 font-semibold text-white"
+            href={`/posts/${id}/edit`}
+          >
+            Edit Post
+          </Link>
         ) : (
           <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
         )}

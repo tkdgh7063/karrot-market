@@ -8,8 +8,7 @@ import {
 } from "@/lib/constants";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 export async function likePost(postId: number) {
   // await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -101,20 +100,4 @@ export async function deleteComment(postId: number, commentId: number) {
   if (comment) revalidateTag(`post-comments-${postId}`);
 
   return comment;
-}
-
-export async function deletePost(_: any, formData: FormData) {
-  const id = Number(formData.get("postId"));
-  const post = await db.post.delete({
-    where: {
-      id,
-    },
-  });
-
-  if (post) {
-    revalidateTag(`post-${id}`);
-    revalidatePath("/life");
-
-    return redirect("/life");
-  }
 }
