@@ -11,7 +11,7 @@ const publicOnlyURLs = new Set([
 ]);
 
 export async function middleware(request: NextRequest) {
-  const isLoggedIn = Boolean(getLoggedInUserId);
+  const isLoggedIn = Boolean(await getLoggedInUserId());
   const isPublic = publicOnlyURLs.has(request.nextUrl.pathname);
   if (isLoggedIn && isPublic) {
     return NextResponse.redirect(new URL("/profile", request.url));
