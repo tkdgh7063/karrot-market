@@ -3,6 +3,9 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import FormattedDate from "./formatted-date";
+import db from "@/lib/db";
+import { getLoggedInUserId } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 interface ProductDetailProps {
   product: {
@@ -27,6 +30,26 @@ export default function ProductDetail({
   product,
   isOwner,
 }: ProductDetailProps) {
+  const createChatRoom = async () => {
+    "use server";
+    const loggedInUserId = await getLoggedInUserId();
+    const room = await db.chatRoom.create({
+      data: {
+        users: {
+          connect: [
+            {
+              id: product.userId,
+            },
+            { id: loggedInUserId },
+          ],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    redirect(`/chats/${room.id}`);
+  };
   return (
     <div>
       <div className="relative aspect-square">
@@ -77,12 +100,11 @@ export default function ProductDetail({
             Edit Product
           </Link>
         ) : (
-          <Link
-            className="rounded-md bg-orange-500 px-4 py-2.5 font-semibold text-white"
-            href={``}
-          >
-            Chat with seller
-          </Link>
+          <form action={createChatRoom}>
+            <button className="rounded-md bg-orange-500 px-4 py-2.5 font-semibold text-white hover:cursor-pointer hover:bg-orange-400">
+              Chat with seller
+            </button>
+          </form>
         )}
       </div>
     </div>
