@@ -1,29 +1,47 @@
+import ChatMessagesList from "@/components/chat-messages-list";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
 import { notFound } from "next/navigation";
 
-async function getRoom(id: string) {
+async function getRoom(id: string, userId: number) {
   const room = await db.chatRoom.findUnique({
     where: { id },
     include: {
       users: {
         select: { id: true },
       },
-      messages: {
-        select: {
-          payload: true,
-        },
-      },
     },
   });
-
-  const loggedInuserId = await getLoggedInUserId();
-  if (room && Boolean(room.users.find((user) => user.id === loggedInuserId))) {
+  if (room && Boolean(room.users.find((user) => user.id === userId))) {
     return room;
   } else {
     return null;
   }
 }
+
+async function getMessages(chatRoomId: string) {
+  const messages = await db.message.findMany({
+    where: {
+      chatRoomId,
+    },
+    select: {
+      id: true,
+      payload: true,
+      created_at: true,
+      userId: true,
+      user: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  return messages;
+}
+
+export type InitialMessages = Awaited<ReturnType<typeof getMessages>>;
 
 export default async function ChatRoom({
   params,
@@ -31,17 +49,18 @@ export default async function ChatRoom({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const loggedInUserId = await getLoggedInUserId();
 
-  const room = await getRoom(id);
+  const room = await getRoom(id, loggedInUserId);
   if (!room) {
     return notFound();
   }
+
+  const initialMessages = await getMessages(room.id);
   return (
-    <div>
-      <span>ChatRoom id: {id}</span>
-      {room.messages.map((message) => (
-        <div>Message: {message.payload}</div>
-      ))}
-    </div>
+    <ChatMessagesList
+      userId={loggedInUserId}
+      initialMessages={initialMessages}
+    />
   );
 }
