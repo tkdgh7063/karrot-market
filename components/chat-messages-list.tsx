@@ -1,21 +1,91 @@
 "use client";
 
 import { InitialMessages } from "@/app/chats/[id]/page";
-import { formatDate } from "@/lib/utils";
+import { saveMessage } from "@/app/chats/actions";
+import { User } from "@/lib/types";
+import { formatMessageDate } from "@/lib/utils";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
+import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatMessagesListProps {
+  chatRoomId: string;
   initialMessages: InitialMessages;
+  user: User;
   userId: number;
 }
 
 export default function ChatMessagesList({
+  chatRoomId,
   initialMessages,
+  user,
   userId,
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState(initialMessages);
+  const [message, setMessage] = useState("");
+  const channel = useRef<RealtimeChannel>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(false);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      id: Date.now(),
+      payload: message,
+      created_at: new Date(),
+      userId,
+      user: {
+        username: "You",
+        avatar: null,
+      },
+    };
+    setMessages((prevMsgs) => [...prevMsgs, payload]);
+
+    channel.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user: {
+          username: user.username,
+          avatar: user.avatar,
+        },
+      },
+    });
+    saveMessage(message, chatRoomId);
+
+    setMessage("");
+  };
+
+  useEffect(() => {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!,
+    );
+
+    channel.current = supabase.channel(`room-${chatRoomId}`);
+    channel.current
+      .on("broadcast", { event: "message" }, (payload) => {
+        setMessages((prevMsgs) => [...prevMsgs, payload.payload]);
+      })
+      .subscribe();
+
+    return () => {
+      channel.current?.unsubscribe();
+    };
+  }, [chatRoomId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
@@ -24,14 +94,14 @@ export default function ChatMessagesList({
         return (
           <div
             key={message.id}
-            className={`flex items-start gap-2 ${isMyMessage ? "justify-end" : "justify-start"}`}
+            className={`flex h-full items-start gap-2 overflow-y-auto ${isMyMessage ? "justify-end" : "justify-start"}`}
           >
             {message.userId !== userId ? (
               message.user.avatar ? (
                 <Image
                   src={message.user.avatar}
-                  width={50}
-                  height={50}
+                  width={40}
+                  height={40}
                   alt={message.user.username}
                   className="size-10 rounded-full"
                 />
@@ -39,19 +109,41 @@ export default function ChatMessagesList({
                 <UserIcon className="size-10 rounded-full" />
               )
             ) : null}
+            <div ref={bottomRef} />
             <div
-              className={`flex flex-col gap-1 ${isMyMessage ? "items-end" : null}`}
+              className={`flex w-full flex-col gap-1 ${isMyMessage ? "items-end" : "items-start"}`}
             >
               <span
-                className={`rounded-md ${isMyMessage ? "bg-neutral-500" : "bg-orange-500"} p-2.5`}
+                className={`rounded-md ${isMyMessage ? "bg-neutral-500" : "bg-orange-500"} px-2.5 py-2`}
               >
                 {message.payload}
               </span>
-              <span className="text-xs">{formatDate(message.created_at)}</span>
+              <span className="text-xs">
+                {formatMessageDate(message.created_at)}
+              </span>
             </div>
           </div>
         );
       })}
+      <form className="relative flex" onSubmit={onSubmit}>
+        <input
+          className="h-10 w-full rounded-full border-none bg-transparent px-5 ring-2 ring-neutral-200 transition placeholder:text-neutral-400 focus:ring-4 focus:ring-neutral-50 focus:outline-none"
+          value={message}
+          onChange={onChange}
+          type="text"
+          placeholder="Type a message..."
+          name="message"
+          autoComplete="off"
+          required
+        />
+        <button
+          type="submit"
+          className="absolute top-1 right-1 z-10 flex size-8 items-center justify-center rounded-full bg-orange-500 pl-0.5 hover:cursor-pointer hover:bg-orange-400 disabled:cursor-not-allowed disabled:bg-neutral-400"
+          disabled={loading}
+        >
+          <PaperAirplaneIcon className="size-6" />
+        </button>
+      </form>
     </div>
   );
 }

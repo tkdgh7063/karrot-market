@@ -36,9 +36,26 @@ async function getMessages(chatRoomId: string) {
         },
       },
     },
+    orderBy: {
+      created_at: "asc",
+    },
   });
 
   return messages;
+}
+
+async function getUserProfile(loggedInUserId: number) {
+  const user = await db.user.findUnique({
+    where: {
+      id: loggedInUserId,
+    },
+    select: {
+      username: true,
+      avatar: true,
+    },
+  });
+
+  return user;
 }
 
 export type InitialMessages = Awaited<ReturnType<typeof getMessages>>;
@@ -51,6 +68,11 @@ export default async function ChatRoom({
   const { id } = await params;
   const loggedInUserId = await getLoggedInUserId();
 
+  const user = await getUserProfile(loggedInUserId);
+  if (!user) {
+    return notFound();
+  }
+
   const room = await getRoom(id, loggedInUserId);
   if (!room) {
     return notFound();
@@ -59,7 +81,9 @@ export default async function ChatRoom({
   const initialMessages = await getMessages(room.id);
   return (
     <ChatMessagesList
+      chatRoomId={id}
       userId={loggedInUserId}
+      user={user}
       initialMessages={initialMessages}
     />
   );

@@ -22,3 +22,15 @@ export function formatDate(date: Date): string {
     return formatter.format(Math.floor(diff / MINUTE), "minute");
   else return "just now";
 }
+
+export function formatMessageDate(date: Date): string {
+  const time = new Date(date);
+  const dateStr = time.toLocaleDateString("ko-KR");
+  const timeStr = time.toLocaleTimeString("ko-KR").slice(0, 7);
+
+  if (time.getFullYear() !== new Date().getFullYear()) {
+    return `${dateStr.slice(2)} ${timeStr}`;
+  } else {
+    return `${dateStr.slice(5)} ${timeStr}`;
+  }
+}
