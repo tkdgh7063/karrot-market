@@ -79,6 +79,16 @@ export default function ChatMessagesList({
       .subscribe();
 
     return () => {
+      fetch("/api/chat/unsubscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chatRoomId,
+          userId,
+          last_read_time: new Date(),
+        }),
+      });
+
       channel.current?.unsubscribe();
     };
   }, [chatRoomId]);

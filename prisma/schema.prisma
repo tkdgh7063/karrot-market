@@ -26,13 +26,14 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  SMSCodes   SMSCode[]
-  products   Product[]
-  posts      Post[]
-  comments   Comment[]
-  likes      Like[]
-  chat_rooms ChatRoom[]
-  messages   Message[]
+  SMSCodes     SMSCode[]
+  products     Product[]
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  chat_rooms   ChatRoom[]
+  messages     Message[]
+  readStatuses ChatRoomReadStatus[]
 }
 
 model SMSCode {
@@ -111,9 +112,21 @@ model ChatRoom {
   id    String @id @default(cuid())
   users User[]
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  messages   Message[]
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @updatedAt
+  messages     Message[]
+  readStatuses ChatRoomReadStatus[]
+}
+
+model ChatRoomReadStatus {
+  last_read_time DateTime?
+
+  user       User     @relation(fields: [userId], references: [id])
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  userId     Int
+  chatRoomId String
+
+  @@id(name: "id", [userId, chatRoomId])
 }
 
 model Message {
