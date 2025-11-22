@@ -1,11 +1,11 @@
+import db from "@/lib/db";
+import { getLoggedInUserId } from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
-import FormattedDate from "./formatted-date";
-import db from "@/lib/db";
-import { getLoggedInUserId } from "@/lib/session";
 import { redirect } from "next/navigation";
+import FormattedDate from "./formatted-date";
 
 interface ProductDetailProps {
   product: {
@@ -33,22 +33,37 @@ export default function ProductDetail({
   const createChatRoom = async () => {
     "use server";
     const loggedInUserId = await getLoggedInUserId();
-    const room = await db.chatRoom.create({
-      data: {
-        users: {
-          connect: [
-            {
-              id: product.userId,
-            },
-            { id: loggedInUserId },
-          ],
-        },
+    const existingRoom = await db.chatRoom.findFirst({
+      where: {
+        AND: [
+          { users: { some: { id: loggedInUserId } } },
+          { users: { some: { id: product.userId } } },
+        ],
       },
       select: {
         id: true,
       },
     });
-    redirect(`/chats/${room.id}`);
+    if (existingRoom) {
+      redirect(`/chats/${existingRoom.id}`);
+    } else {
+      const room = await db.chatRoom.create({
+        data: {
+          users: {
+            connect: [
+              {
+                id: product.userId,
+              },
+              { id: loggedInUserId },
+            ],
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      redirect(`/chats/${room.id}`);
+    }
   };
   return (
     <div>
