@@ -2,7 +2,7 @@ import ChatMessagesList from "@/components/chat-messages-list";
 import { getUnreadMessageCount } from "@/components/chatroom-list";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 async function getRoom(id: string, userId: number) {
   const room = await db.chatRoom.findUnique({
@@ -45,10 +45,10 @@ async function getMessages(chatRoomId: string) {
   return messages;
 }
 
-async function getUserProfile(loggedInUserId: number) {
+async function getUserProfile(userId: number) {
   const user = await db.user.findUnique({
     where: {
-      id: loggedInUserId,
+      id: userId,
     },
     select: {
       username: true,
@@ -76,9 +76,12 @@ export default async function ChatRoom({
 
   const room = await getRoom(id, loggedInUserId);
   if (!room) {
-    return notFound();
+    alert("Chat room not found");
+    return redirect("/chat");
   }
 
+  const otherUserId = room.users.find((user) => user.id !== loggedInUserId)!.id;
+  const otherUser = (await getUserProfile(otherUserId))!;
   const initialMessages = await getMessages(room.id);
   const unreadMessageCount = await getUnreadMessageCount(
     room.id,
@@ -90,6 +93,7 @@ export default async function ChatRoom({
       chatRoomId={id}
       userId={loggedInUserId}
       user={user}
+      otherUser={otherUser}
       initialMessages={initialMessages}
       unreadMessageCount={unreadMessageCount}
     />
