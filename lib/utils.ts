@@ -24,13 +24,10 @@ export function formatDate(date: Date): string {
 }
 
 export function formatMessageDate(date: Date): string {
-  const time = new Date(date);
-  const dateStr = time.toLocaleDateString("ko-KR");
-  const timeStr = time.toLocaleTimeString("ko-KR").slice(0, 7);
+  const dateStr = date.toLocaleString("ko-KR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
 
-  if (time.getFullYear() !== new Date().getFullYear()) {
-    return `${dateStr.slice(2)} ${timeStr}`;
-  } else {
-    return `${dateStr.slice(5)} ${timeStr}`;
-  }
+  return `${dateStr}`;
 }
