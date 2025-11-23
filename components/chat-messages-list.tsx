@@ -113,6 +113,11 @@ export default function ChatMessagesList({
     <>
       <ChatRoomHeader chatRoomId={chatRoomId} user={otherUser} />
       <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
+        {messages.length === 0 ? (
+          <div className="text-center">
+            No messages yet. Start the conversation!
+          </div>
+        ) : null}
         {messages.slice(0, unreadMessageIndex).map((message) => {
           const isMyMessage = Boolean(message.userId === userId);
           return (
