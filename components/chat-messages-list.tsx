@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 interface ChatMessagesListProps {
   chatRoomId: string;
   initialMessages: InitialMessages;
+  unreadMessageCount: number;
   user: User;
   userId: number;
 }
@@ -20,14 +21,20 @@ interface ChatMessagesListProps {
 export default function ChatMessagesList({
   chatRoomId,
   initialMessages,
+  unreadMessageCount,
   user,
   userId,
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
+  const [unreadMessageIndex, setUnreadMessageIndex] = useState(
+    messages.length - unreadMessageCount,
+  );
+
   const channel = useRef<RealtimeChannel>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -63,6 +70,7 @@ export default function ChatMessagesList({
     saveMessage(message, chatRoomId);
 
     setMessage("");
+    setUnreadMessageIndex(messages.length + 1);
   };
 
   useEffect(() => {
@@ -75,6 +83,7 @@ export default function ChatMessagesList({
     channel.current
       .on("broadcast", { event: "message" }, (payload) => {
         setMessages((prevMsgs) => [...prevMsgs, payload.payload]);
+        setUnreadMessageIndex(messages.length + 1);
       })
       .subscribe();
 
@@ -99,7 +108,52 @@ export default function ChatMessagesList({
 
   return (
     <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
-      {messages.map((message) => {
+      {messages.slice(0, unreadMessageIndex).map((message) => {
+        const isMyMessage = Boolean(message.userId === userId);
+        return (
+          <div
+            key={message.id}
+            className={`flex h-full items-start gap-2 overflow-y-auto ${isMyMessage ? "justify-end" : "justify-start"}`}
+          >
+            {message.userId !== userId ? (
+              message.user.avatar ? (
+                <Image
+                  src={message.user.avatar}
+                  width={40}
+                  height={40}
+                  alt={message.user.username}
+                  className="size-10 rounded-full"
+                />
+              ) : (
+                <UserIcon className="size-10 rounded-full" />
+              )
+            ) : null}
+            <div ref={bottomRef} />
+            <div
+              className={`flex w-full flex-col gap-1 ${isMyMessage ? "items-end" : "items-start"}`}
+            >
+              <span
+                className={`rounded-md ${isMyMessage ? "bg-neutral-500" : "bg-orange-500"} px-2.5 py-2`}
+              >
+                {message.payload}
+              </span>
+              <span className="text-xs">
+                {formatMessageDate(message.created_at)}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+      {unreadMessageIndex < messages.length ? (
+        <div className="my-4 flex items-center gap-3">
+          <div className="flex-grow border-t border-gray-300" />
+          <span className="text-sm font-semibold text-gray-500">
+            New messages
+          </span>
+          <div className="flex-grow border-t border-gray-300" />
+        </div>
+      ) : null}
+      {messages.slice(unreadMessageIndex).map((message) => {
         const isMyMessage = Boolean(message.userId === userId);
         return (
           <div

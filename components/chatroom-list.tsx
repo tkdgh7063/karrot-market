@@ -6,7 +6,10 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 
-async function getUnreadMessageCount(chatRoomId: string, userId: number) {
+export async function getUnreadMessageCount(
+  chatRoomId: string,
+  userId: number,
+) {
   const lastRead = await db.chatRoomReadStatus.findUnique({
     where: { id: { chatRoomId, userId } },
     select: { last_read_time: true },
