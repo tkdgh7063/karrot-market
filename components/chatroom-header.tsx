@@ -9,12 +9,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ChatRoomHeaderProps {
-  user: User;
+  otherUser: User;
   chatRoomId: string;
 }
 
 export default function ChatRoomHeader({
-  user,
+  otherUser,
   chatRoomId,
 }: ChatRoomHeaderProps) {
   return (
@@ -23,16 +23,16 @@ export default function ChatRoomHeader({
         <ArrowLeftIcon className="size-7 text-white" />
       </Link>
       <div className="flex items-center gap-2">
-        {user.avatar !== null ? (
+        {otherUser.avatar !== null ? (
           <Image
-            src={user.avatar}
-            alt={user.username}
+            src={otherUser.avatar}
+            alt={otherUser.username}
             className="size-7 overflow-hidden rounded-full bg-neutral-700"
           />
         ) : (
           <UserIcon className="size-7 overflow-hidden rounded-full bg-neutral-700" />
         )}
-        <span className="text-lg font-semibold">{user.username}</span>
+        <span className="text-lg font-semibold">{otherUser.username}</span>
       </div>
       <form action={leaveChatRoom}>
         <input type="hidden" name="chatRoomId" value={chatRoomId} />

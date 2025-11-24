@@ -6,32 +6,33 @@ import { User } from "@/lib/types";
 import { formatMessageDate } from "@/lib/utils";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
-import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 interface ChatMessagesListProps {
   chatRoomId: string;
-  initialMessages: InitialMessages;
-  unreadMessageCount: number;
+  messages: InitialMessages;
+  setMessages: React.Dispatch<React.SetStateAction<InitialMessages>>;
+  unreadMessageIndex: number;
+  setUnreadMessageIndex: React.Dispatch<React.SetStateAction<number>>;
   user: User;
   userId: number;
+  channel: RefObject<RealtimeChannel | null>;
 }
 
 export default function ChatMessagesList({
   chatRoomId,
-  initialMessages,
-  unreadMessageCount,
+  messages,
+  setMessages,
+  unreadMessageIndex,
+  setUnreadMessageIndex,
   user,
   userId,
+  channel,
 }: ChatMessagesListProps) {
-  const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
-  const [unreadMessageIndex, setUnreadMessageIndex] = useState(
-    messages.length - unreadMessageCount,
-  );
 
-  const channel = useRef<RealtimeChannel>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -72,35 +73,6 @@ export default function ChatMessagesList({
     setMessage("");
     setUnreadMessageIndex(messages.length + 1);
   };
-
-  useEffect(() => {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!,
-    );
-
-    channel.current = supabase.channel(`room-${chatRoomId}`);
-    channel.current
-      .on("broadcast", { event: "message" }, (payload) => {
-        setMessages((prevMsgs) => [...prevMsgs, payload.payload]);
-        setUnreadMessageIndex(messages.length + 1);
-      })
-      .subscribe();
-
-    return () => {
-      fetch("/api/chat/unsubscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chatRoomId,
-          userId,
-          last_read_time: new Date(),
-        }),
-      });
-
-      channel.current?.unsubscribe();
-    };
-  }, [chatRoomId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
