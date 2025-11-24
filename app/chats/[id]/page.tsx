@@ -1,4 +1,5 @@
 import ChatMessagesList from "@/components/chat-messages-list";
+import ChatRoomHeader from "@/components/chatroom-header";
 import { getUnreadMessageCount } from "@/components/chatroom-list";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
@@ -89,13 +90,15 @@ export default async function ChatRoom({
   );
 
   return (
-    <ChatMessagesList
-      chatRoomId={id}
-      userId={loggedInUserId}
-      user={user}
-      otherUser={otherUser}
-      initialMessages={initialMessages}
-      unreadMessageCount={unreadMessageCount}
-    />
+    <>
+      <ChatRoomHeader chatRoomId={id} user={otherUser} />
+      <ChatMessagesList
+        chatRoomId={id}
+        userId={loggedInUserId}
+        user={user}
+        initialMessages={initialMessages}
+        unreadMessageCount={unreadMessageCount}
+      />
+    </>
   );
 }

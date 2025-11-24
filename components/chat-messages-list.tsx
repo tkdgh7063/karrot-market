@@ -9,14 +9,12 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import ChatRoomHeader from "./chatroom-header";
 
 interface ChatMessagesListProps {
   chatRoomId: string;
   initialMessages: InitialMessages;
   unreadMessageCount: number;
   user: User;
-  otherUser: User;
   userId: number;
 }
 
@@ -25,7 +23,6 @@ export default function ChatMessagesList({
   initialMessages,
   unreadMessageCount,
   user,
-  otherUser,
   userId,
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState(initialMessages);
@@ -111,7 +108,6 @@ export default function ChatMessagesList({
 
   return (
     <>
-      <ChatRoomHeader chatRoomId={chatRoomId} user={otherUser} />
       <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
         {messages.length === 0 ? (
           <div className="text-center">
