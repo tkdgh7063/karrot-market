@@ -21,6 +21,8 @@ export const COMMENT_MAX_LENGTH = 50;
 export const COMMENT_LIMIT_COUNT = 3;
 export const COMMENT_LIMIT_TIME = 5 * 60 * 1000; // 5 minutes
 
+export const STREAM_TITLE_MAX_LENGTH = 30;
+
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "Email is required",
   EMAIL_INVALID: "Please enter a valid email address",
@@ -69,6 +71,9 @@ export const ERROR_MESSAGES = {
   COMMENT_TOO_LONG: "Comment must be less than 50 characters",
 
   COMMENT_LIMIT_REACHED: "Oops! You can only post 3 comments in 5 minutes.",
+
+  STREAM_TITLE_REQUIRED: "Stream title is required",
+  STREAM_TITLE_TOO_LONG: `Stream title must be less than ${STREAM_TITLE_MAX_LENGTH} characters`,
 };
 
 export const HASH_ROUNDS = 12;

@@ -34,6 +34,7 @@ model User {
   chat_rooms   ChatRoom[]
   messages     Message[]
   readStatuses ChatRoomReadStatus[]
+  LiveStream   LiveStream[]
 }
 
 model SMSCode {
@@ -140,4 +141,17 @@ model Message {
   user       User     @relation(fields: [userId], references: [id])
   chatRoomId String
   userId     Int
+}
+
+model LiveStream {
+  id        Int    @id @default(autoincrement())
+  title     String
+  streamKey String @unique
+  streamId  String @unique
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
 }
