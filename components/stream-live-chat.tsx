@@ -9,6 +9,8 @@ interface StreamLiveChatProps {
   streamId: string;
   userId: number;
   username: string;
+  streamerId: number;
+  isStreamOwner: boolean;
 }
 
 interface ChatMessage {
@@ -25,6 +27,8 @@ export default function StreamLiveChatClient({
   streamId,
   userId,
   username,
+  streamerId,
+  isStreamOwner,
 }: StreamLiveChatProps) {
   const [chatMessage, setChatMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -38,6 +42,7 @@ export default function StreamLiveChatClient({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!chatMessage) return;
 
     const payload = {
       id: Date.now(),
@@ -45,7 +50,7 @@ export default function StreamLiveChatClient({
       created_at: new Date(),
       userId,
       user: {
-        username,
+        username: isStreamOwner ? "STREAMER" : username,
       },
     };
     setChatMessages((prev) => [...prev, payload]);
@@ -82,18 +87,22 @@ export default function StreamLiveChatClient({
   }, [chatMessages]);
 
   return (
-    <div className="flex w-full flex-col gap-2 rounded-md bg-neutral-500 px-5 pt-3 pb-2.5">
+    <div className="flex w-full flex-col gap-2 rounded-md bg-neutral-700 px-5 pt-3 pb-2.5">
       <div className="text-lg">Live Chats</div>
-      <div className="max-h-[240px] min-h-[240px] flex-1 overflow-x-hidden overflow-y-auto *:select-none">
+      <div className="mb-1 max-h-[240px] min-h-[240px] flex-1 overflow-x-hidden overflow-y-auto *:select-none">
         {chatMessages.map((chatMessage, index) => (
           <div
             key={chatMessage.id}
             ref={index === chatMessages.length - 1 ? bottomRef : null}
             className="flex items-center gap-2"
           >
-            <span className="font-semibold">{chatMessage.user.username}</span>
+            <span
+              className={`font-semibold ${chatMessage.userId === streamerId ? "text-orange-500" : "text-neutral-400"}`}
+            >
+              {chatMessage.user.username}
+            </span>
             <span className="text-sm">{chatMessage.payload}</span>
-            <span className="text-xs text-neutral-400">
+            <span className="text-xs text-gray-400">
               {formatStreamChatDate(new Date(chatMessage.created_at))}
             </span>
           </div>

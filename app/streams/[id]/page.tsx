@@ -110,6 +110,8 @@ export default async function StreamDetailPage({
         streamId={streamId}
         userId={loggedInUserId}
         username={username}
+        streamerId={stream.userId}
+        isStreamOwner={stream.userId === loggedInUserId}
       />
     </div>
   );
