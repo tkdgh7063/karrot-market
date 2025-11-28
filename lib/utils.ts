@@ -31,3 +31,21 @@ export function formatMessageDate(date: Date): string {
 
   return `${dateStr}`;
 }
+
+export function formatStreamDate(date: Date): string {
+  const now = new Date().getTime();
+  const streamStart = new Date(date).getTime();
+  let diff = now - streamStart;
+
+  if (diff < 0) diff = 0;
+
+  const sec = Math.floor(diff / 1000);
+  const min = Math.floor(sec / 60);
+  const hour = Math.floor(min / 60);
+  const day = Math.floor(hour / 24);
+
+  if (day > 0) return `${day}d ${hour % 24}h ${min % 60}m`;
+  if (hour > 0) return `${hour}h ${min % 60}m`;
+  if (min > 0) return `${min}m ${sec % 60}s`;
+  return `${sec}s`;
+}
