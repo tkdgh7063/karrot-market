@@ -49,3 +49,11 @@ export function formatStreamDate(date: Date): string {
   if (min > 0) return `${min}m ${sec % 60}s`;
   return `${sec}s`;
 }
+
+export function formatStreamChatDate(date: Date): string {
+  const timeStr = date.toLocaleTimeString("ko-KR", {
+    hour12: false,
+    timeStyle: "short",
+  });
+  return `${timeStr}`;
+}

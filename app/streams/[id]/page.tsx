@@ -1,3 +1,4 @@
+import StreamLiveChatClient from "@/components/stream-live-chat";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
 import { UserIcon } from "@heroicons/react/24/solid";
@@ -26,6 +27,20 @@ async function getStream(streamId: string) {
   return stream;
 }
 
+async function getUsername(userId: number) {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      username: true,
+    },
+  });
+
+  if (!user) return null;
+  return user.username;
+}
+
 export default async function StreamDetailPage({
   params,
 }: {
@@ -37,56 +52,65 @@ export default async function StreamDetailPage({
   if (!stream) return notFound();
 
   const loggedInUserId = await getLoggedInUserId();
+  const username = await getUsername(loggedInUserId);
+  if (!username) return notFound();
 
   return (
-    <div className="flex flex-col gap-3 p-5">
-      <div className="relative aspect-video">
-        {/* <iframe
+    <div className="flex h-[100vh] flex-col justify-between p-5">
+      <div className="flex flex-col gap-3">
+        <div className="relative aspect-video">
+          {/* <iframe
           src={`https://${process.env.CLOUDFLARE_DOMAIN}/${stream.streamKey}/iframe`}
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
           className="h-full w-full rounded-md"
         /> */}
-        {stream.user.avatar !== null ? (
-          <Image
-            src={stream.user.avatar}
-            alt={stream.user.username}
-            fill
-            className="rounded-md blur-sm hover:blur-none"
-          />
-        ) : (
-          <UserIcon className="rounded-md bg-neutral-700 blur-sm" />
-        )}
-      </div>
-      <span>STREAM TITLE: {stream.title}</span>
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2">
-          <span className="text-white">HOSTED BY:</span>
           {stream.user.avatar !== null ? (
             <Image
               src={stream.user.avatar}
               alt={stream.user.username}
-              height={28}
-              width={28}
-              className="size-6 overflow-hidden rounded-full"
+              fill
+              className="rounded-md blur-sm hover:blur-none"
             />
           ) : (
-            <UserIcon className="size-6 overflow-hidden rounded-full" />
+            <UserIcon className="rounded-md bg-neutral-700 blur-sm" />
           )}
-          <span>{stream.user.username}</span>
         </div>
+        <span>STREAM TITLE: {stream.title}</span>
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-2">
+            <span className="text-white">HOSTED BY:</span>
+            {stream.user.avatar !== null ? (
+              <Image
+                src={stream.user.avatar}
+                alt={stream.user.username}
+                height={28}
+                width={28}
+                className="size-6 overflow-hidden rounded-full"
+              />
+            ) : (
+              <UserIcon className="size-6 overflow-hidden rounded-full" />
+            )}
+            <span>{stream.user.username}</span>
+          </div>
+        </div>
+        {stream.userId === loggedInUserId && (
+          <div className="rounded-md bg-yellow-200 p-3 text-black">
+            <div className="flex gap-2">
+              <span className="font-semibold">Stream URL:</span>
+              <span>rtmps://live.cloudflare.com:443/live/</span>
+            </div>
+            <div className="flex flex-wrap">
+              <span className="font-semibold">Secret Key:</span>
+              <span className="text-sm break-all">{stream.streamKey}</span>
+            </div>
+          </div>
+        )}
       </div>
-      {stream.userId === loggedInUserId && (
-        <div className="rounded-md bg-yellow-200 p-3 text-black">
-          <div className="flex gap-2">
-            <span className="font-semibold">Stream URL:</span>
-            <span>rtmps://live.cloudflare.com:443/live/</span>
-          </div>
-          <div className="flex flex-wrap">
-            <span className="font-semibold">Secret Key:</span>
-            <span className="text-sm break-all">{stream.streamKey}</span>
-          </div>
-        </div>
-      )}
+      <StreamLiveChatClient
+        streamId={streamId}
+        userId={loggedInUserId}
+        username={username}
+      />
     </div>
   );
 }
