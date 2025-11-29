@@ -77,7 +77,7 @@ export default async function Life() {
           </div>
         </Link>
       ))}
-      <AddIconBtn href={`/add-posts`} />
+      <AddIconBtn href={`/posts/add-posts`} />
     </div>
   );
 }
