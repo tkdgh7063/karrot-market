@@ -13,7 +13,9 @@ const titleSchema = z
   .nonempty(ERROR_MESSAGES.STREAM_TITLE_REQUIRED)
   .max(STREAM_TITLE_MAX_LENGTH, ERROR_MESSAGES.STREAM_TITLE_TOO_LONG);
 
-export default async function startStream(_: any, formData: FormData) {
+const streamIdSchema = z.string().trim().nonempty();
+
+export async function startStream(_: any, formData: FormData) {
   const results = titleSchema.safeParse(formData.get("title"));
   if (!results.success) return z.flattenError(results.error);
 
@@ -64,4 +66,19 @@ export default async function startStream(_: any, formData: FormData) {
       error: ERROR_MESSAGES.STREAM_CREATION_FAILED,
     };
   }
+}
+
+export async function deleteStream(formData: FormData) {
+  const streamId = formData.get("streamId") as string;
+  if (!streamId || typeof streamId !== "string") return;
+
+  const results = streamIdSchema.safeParse(streamId);
+  if (!results.success) return;
+
+  await db.liveStream.delete({
+    where: {
+      streamId,
+    },
+  });
+  return redirect("/live");
 }

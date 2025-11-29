@@ -1,6 +1,6 @@
 "use client";
 
-import startStream from "@/app/streams/add/actions";
+import { startStream } from "@/app/streams/add/actions";
 import { STREAM_TITLE_MAX_LENGTH } from "@/lib/constants";
 import { useActionState } from "react";
 import Button from "./button";
