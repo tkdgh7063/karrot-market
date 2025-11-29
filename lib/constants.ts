@@ -74,6 +74,7 @@ export const ERROR_MESSAGES = {
 
   STREAM_TITLE_REQUIRED: "Stream title is required",
   STREAM_TITLE_TOO_LONG: `Stream title must be less than ${STREAM_TITLE_MAX_LENGTH} characters`,
+  STREAM_CREATION_FAILED: "Failed to start the live stream. Please try again.",
 };
 
 export const HASH_ROUNDS = 12;

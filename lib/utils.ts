@@ -47,7 +47,7 @@ export function formatStreamDate(date: Date): string {
   if (day > 0) return `${day}d ${hour % 24}h ${min % 60}m`;
   if (hour > 0) return `${hour}h ${min % 60}m`;
   if (min > 0) return `${min}m ${sec % 60}s`;
-  return `${sec}s`;
+  return `Just now`;
 }
 
 export function formatStreamChatDate(date: Date): string {

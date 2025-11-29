@@ -35,17 +35,33 @@ export default async function startStream(_: any, formData: FormData) {
   const response = await createLiveInput(results.data);
   const data = await response.json();
 
-  const stream = await db.liveStream.create({
-    data: {
-      title: results.data,
-      streamId: data.result.uid,
-      streamKey: data.result.rtmps.streamKey,
-      userId: loggedInUserId,
-    },
-    select: {
-      streamId: true,
-    },
-  });
+  try {
+    const stream = await db.$transaction(async (tx) => {
+      await tx.liveStream.deleteMany({
+        where: {
+          userId: loggedInUserId,
+        },
+      });
 
-  return redirect(`/streams/${stream.streamId}`);
+      return await tx.liveStream.create({
+        data: {
+          title: results.data,
+          streamId: data.result.uid,
+          streamKey: data.result.rtmps.streamKey,
+          userId: loggedInUserId,
+        },
+        select: {
+          streamId: true,
+        },
+      });
+    });
+
+    return redirect(`/streams/${stream.streamId}`);
+  } catch (e) {
+    console.log(e);
+    return {
+      ok: false,
+      error: ERROR_MESSAGES.STREAM_CREATION_FAILED,
+    };
+  }
 }

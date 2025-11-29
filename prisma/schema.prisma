@@ -153,5 +153,5 @@ model LiveStream {
   updated_at DateTime @updatedAt
 
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
+  userId Int  @unique
 }
