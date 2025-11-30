@@ -16,6 +16,8 @@ export default async function ProductModal({
   await sleep(3000);
 
   const id = Number((await params).id);
+  if (isNaN(id)) return redirect("/products");
+
   const product = await db.product.findUnique({
     where: {
       id,

@@ -46,7 +46,7 @@ export default async function Products() {
       <form action={revalidate}>
         <button>Revalidate</button>
       </form>
-      <AddIconBtn href={`/add-products`} />
+      <AddIconBtn href={`/products/add-products`} />
     </div>
   );
 }
