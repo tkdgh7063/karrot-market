@@ -37,8 +37,9 @@ export async function startStream(_: any, formData: FormData) {
   const response = await createLiveInput(results.data);
   const data = await response.json();
 
+  let stream;
   try {
-    const stream = await db.$transaction(async (tx) => {
+    stream = await db.$transaction(async (tx) => {
       await tx.liveStream.deleteMany({
         where: {
           userId: loggedInUserId,
@@ -57,15 +58,13 @@ export async function startStream(_: any, formData: FormData) {
         },
       });
     });
-
-    return redirect(`/streams/${stream.streamId}`);
   } catch (e) {
-    console.log(e);
     return {
       ok: false,
       error: ERROR_MESSAGES.STREAM_CREATION_FAILED,
     };
   }
+  return redirect(`/streams/${stream.streamId}`);
 }
 
 export async function deleteStream(formData: FormData) {
