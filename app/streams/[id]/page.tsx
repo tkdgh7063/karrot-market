@@ -3,7 +3,7 @@ import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { deleteStream } from "../add/actions";
 
 async function getStream(streamId: string) {
@@ -50,7 +50,7 @@ export default async function StreamDetailPage({
   const streamId = (await params).id;
 
   const stream = await getStream(streamId);
-  if (!stream) return notFound();
+  if (!stream) return redirect("/live");
 
   const loggedInUserId = await getLoggedInUserId();
   const username = await getUsername(loggedInUserId);
