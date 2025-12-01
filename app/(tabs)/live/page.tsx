@@ -22,7 +22,7 @@ export default async function Live() {
 
   return (
     <div
-      className={`flex h-[100vh] flex-col gap-2 ${streams.length === 0 ? "items-center justify-center" : null}`}
+      className={`mt-5 flex h-[100vh] flex-col gap-2 px-5 ${streams.length === 0 ? "items-center justify-center" : null}`}
     >
       {streams.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 *:text-xl">
@@ -30,7 +30,7 @@ export default async function Live() {
           <span>Check back later or start your own stream!</span>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 px-2">
+        <div className="grid grid-cols-2 gap-2">
           {streams.map((stream) => (
             <Link
               className="flex flex-col gap-2 rounded-md bg-orange-500 px-3 py-2 text-white *:select-none hover:bg-orange-400"

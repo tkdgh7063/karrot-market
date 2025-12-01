@@ -63,8 +63,8 @@ export default async function StreamDetailPage({
           {/* <iframe
           src={`https://${process.env.CLOUDFLARE_DOMAIN}/${stream.streamKey}/iframe`}
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          className="h-full w-full rounded-md"
-        /> */}
+          className="h-full w-full rounded-md"/>
+          */}
           {stream.user.avatar !== null ? (
             <Image
               src={stream.user.avatar}
@@ -73,7 +73,7 @@ export default async function StreamDetailPage({
               className="rounded-md blur-sm hover:blur-none"
             />
           ) : (
-            <UserIcon className="rounded-md bg-neutral-700 blur-sm" />
+            <UserIcon className="size-full rounded-md bg-neutral-700 blur-sm hover:blur-none" />
           )}
         </div>
         <span>STREAM TITLE: {stream.title}</span>
@@ -102,7 +102,7 @@ export default async function StreamDetailPage({
             </div>
             <div className="flex flex-wrap">
               <span className="font-semibold">Secret Key</span>
-              <span className="break-all text-sm">{stream.streamKey}</span>
+              <span className="text-sm break-all">{stream.streamKey}</span>
             </div>
             <form action={deleteStream} className="flex justify-center">
               <input type="hidden" name="streamId" value={streamId} />
