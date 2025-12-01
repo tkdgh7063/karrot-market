@@ -40,6 +40,14 @@ export const metadata: Metadata = {
 
 export default async function Life() {
   const posts = await getPosts();
+  if (posts.length === 0) {
+    return (
+      <div className="flex h-[100vh] flex-col items-center justify-center gap-2 *:text-xl">
+        <span>Hmm… nothing’s cooking 🍳</span>
+        <span>Add a post and spice things up!</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col p-5">
