@@ -24,11 +24,6 @@ export default async function Live() {
     <div
       className={`flex h-[100vh] flex-col gap-2 ${streams.length === 0 ? "items-center justify-center" : null}`}
     >
-      <div
-        className={`text-semibold w-full p-5 text-center text-2xl text-white ${streams.length === 0 ? "fixed top-0" : null}`}
-      >
-        Live
-      </div>
       {streams.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 *:text-xl">
           <span>No streams are live right now 😴</span>
