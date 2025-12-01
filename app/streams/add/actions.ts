@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import z from "zod";
 
 const titleSchema = z
-  .string()
+  .string({ error: ERROR_MESSAGES.STREAM_TITLE_NOT_STRING })
   .trim()
   .nonempty(ERROR_MESSAGES.STREAM_TITLE_REQUIRED)
   .max(STREAM_TITLE_MAX_LENGTH, ERROR_MESSAGES.STREAM_TITLE_TOO_LONG);

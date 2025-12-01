@@ -72,6 +72,7 @@ export const ERROR_MESSAGES = {
 
   COMMENT_LIMIT_REACHED: "Oops! You can only post 3 comments in 5 minutes.",
 
+  STREAM_TITLE_NOT_STRING: "Stream title must be a string",
   STREAM_TITLE_REQUIRED: "Stream title is required",
   STREAM_TITLE_TOO_LONG: `Stream title must be less than ${STREAM_TITLE_MAX_LENGTH} characters`,
   STREAM_CREATION_FAILED: "Failed to start the live stream. Please try again.",
