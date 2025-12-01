@@ -15,6 +15,7 @@ export default function ProductList({
   const [products, setProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
   const trigger = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       async (
@@ -47,6 +48,15 @@ export default function ProductList({
       observer.disconnect();
     };
   }, [page]);
+
+  if (products.length === 0) {
+    return (
+      <div className="flex h-[100vh] flex-col items-center justify-center gap-2 *:text-xl">
+        <span>Looks like the shelves are empty 🛍️</span>
+        <span>Post your stuff and start swapping!</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5 p-5">
