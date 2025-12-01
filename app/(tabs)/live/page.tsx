@@ -21,12 +21,16 @@ export default async function Live() {
   });
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-semibold fixed top-0 w-full p-5 text-center text-2xl text-white">
+    <div
+      className={`flex h-[100vh] flex-col gap-2 ${streams.length === 0 ? "items-center justify-center" : null}`}
+    >
+      <div
+        className={`text-semibold w-full p-5 text-center text-2xl text-white ${streams.length === 0 ? "fixed top-0" : null}`}
+      >
         Live
       </div>
       {streams.length === 0 ? (
-        <div className="flex h-[100vh] flex-col items-center justify-center gap-2 *:text-xl">
+        <div className="flex flex-col items-center justify-center gap-2 *:text-xl">
           <span>No streams are live right now 😴</span>
           <span>Check back later or start your own stream!</span>
         </div>
@@ -34,7 +38,7 @@ export default async function Live() {
         <div className="grid grid-cols-2 gap-2 px-2">
           {streams.map((stream) => (
             <Link
-              className="flex flex-col gap-2 rounded-md bg-orange-500 px-3 py-2 text-white hover:bg-orange-400"
+              className="flex flex-col gap-2 rounded-md bg-orange-500 px-3 py-2 text-white *:select-none hover:bg-orange-400"
               key={stream.id}
               href={`/streams/${stream.streamId}`}
             >
