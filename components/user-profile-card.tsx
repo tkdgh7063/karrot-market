@@ -1,0 +1,50 @@
+import { UserProps } from "@/app/(tabs)/profile/page";
+import { logoutUser } from "@/lib/session";
+import { UserIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+
+export default function UserProfileCard({ user }: { user: UserProps }) {
+  const logout = async () => {
+    "use server";
+    await logoutUser();
+    return redirect("/");
+  };
+
+  if (!user) return notFound();
+
+  return (
+    <div className="flex h-[100vh] flex-col gap-5 bg-red-400 text-white">
+      <div className="flex flex-col items-center gap-2 pt-5">
+        {user.avatar ? (
+          <Image
+            src={user.avatar}
+            alt={user.username}
+            width={100}
+            height={100}
+            className="size-24 overflow-hidden rounded-full"
+          />
+        ) : (
+          <UserIcon className="size-24 overflow-hidden rounded-full bg-neutral-500" />
+        )}
+        <div>{user.username}</div>
+        <div>{user.email ? user.email : "No Email"}</div>
+        <form action={logout}>
+          <button className="bg-orange-400 px-3 py-1">Logout</button>
+        </form>
+      </div>
+      <div className="grid grid-flow-row grid-cols-3">
+        {user.products.map((product) => (
+          <Link
+            key={product.id}
+            href={`/products/${product.id}`}
+            className="relative size-40"
+          >
+            <Image src={product.photo} alt={product.title} fill />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

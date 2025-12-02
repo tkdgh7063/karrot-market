@@ -1,6 +1,8 @@
+import UserProfileCard from "@/components/user-profile-card";
 import db from "@/lib/db";
-import { getLoggedInUserId, logoutUser } from "@/lib/session";
-import { notFound, redirect } from "next/navigation";
+import { getLoggedInUserId } from "@/lib/session";
+import { PromiseReturnType } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 async function getUser() {
   const loggedInUserId = await getLoggedInUserId();
@@ -9,28 +11,32 @@ async function getUser() {
       where: {
         id: loggedInUserId,
       },
+      select: {
+        products: {
+          select: {
+            id: true,
+            photo: true,
+            title: true,
+          },
+        },
+        email: true,
+        avatar: true,
+        username: true,
+        created_at: true,
+      },
     });
     if (user) {
       return user;
     }
-  } else {
-    notFound();
   }
+  return null;
 }
 
+export type UserProps = PromiseReturnType<typeof getUser>;
+
 export default async function Profile() {
-  const logout = async () => {
-    "use server";
-    await logoutUser();
-    return redirect("/");
-  };
   const user = await getUser();
-  return (
-    <div>
-      <h1>Welcome {user?.username}!</h1>
-      <form action={logout}>
-        <button>Logout</button>
-      </form>
-    </div>
-  );
+  if (!user) return notFound();
+
+  return <UserProfileCard user={user} />;
 }
