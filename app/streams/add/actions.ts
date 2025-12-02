@@ -81,17 +81,13 @@ export async function EndStream(formData: FormData) {
   );
 
   const channel = supabase.channel(`live-${streamId}`);
-  channel.send({
-    type: "broadcast",
-    event: "end",
-    payload: {
-      id: Date.now(),
-      payload: "This livestream has finished. Thanks for watching!",
-      created_at: new Date(),
-      userId: 0,
-      user: {
-        username: "SYSTEM",
-      },
+  channel.httpSend("end", {
+    id: Date.now(),
+    payload: "This livestream has finished. Thanks for watching!",
+    created_at: new Date(),
+    userId: 0,
+    user: {
+      username: "SYSTEM",
     },
   });
 
