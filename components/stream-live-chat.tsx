@@ -32,6 +32,7 @@ export default function StreamLiveChatClient({
 }: StreamLiveChatProps) {
   const [chatMessage, setChatMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [finish, setFinish] = useState(false);
 
   const channel = useRef<RealtimeChannel>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,8 +73,11 @@ export default function StreamLiveChatClient({
     channel.current = supabase.channel(`live-${streamId}`);
     channel.current
       .on("broadcast", { event: "message" }, (payload) => {
-        console.log(payload.payload);
         setChatMessages((prev) => [...prev, payload.payload]);
+      })
+      .on("broadcast", { event: "end" }, (payload) => {
+        setChatMessages((prev) => [...prev, payload.payload]);
+        setFinish(true);
       })
       .subscribe();
 
@@ -94,7 +98,7 @@ export default function StreamLiveChatClient({
           <div
             key={chatMessage.id}
             ref={index === chatMessages.length - 1 ? bottomRef : null}
-            className="flex items-center gap-2"
+            className="flex gap-2"
           >
             <span
               className={`font-semibold ${chatMessage.userId === streamerId ? "text-orange-500" : "text-neutral-400"}`}
@@ -110,11 +114,12 @@ export default function StreamLiveChatClient({
       </div>
       <form className="relative flex" onSubmit={onSubmit}>
         <input
-          className="h-10 w-full rounded-full border-none bg-transparent px-5 ring-2 ring-neutral-200 transition placeholder:text-neutral-400 focus:ring-4 focus:ring-neutral-50 focus:outline-none"
+          className="h-10 w-full rounded-full border-none bg-transparent px-5 ring-2 ring-neutral-200 transition placeholder:text-neutral-400 focus:ring-4 focus:ring-neutral-50 focus:outline-none disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:ring-2 disabled:ring-neutral-600"
           value={chatMessage}
           onChange={onChange}
+          disabled={finish}
           type="text"
-          placeholder="Type a chat..."
+          placeholder={finish ? "Livestream ended" : "Type a chat..."}
           name="chatMessage"
           autoComplete="off"
           required
@@ -122,7 +127,7 @@ export default function StreamLiveChatClient({
         <button
           type="submit"
           className="absolute top-1 right-1 z-10 flex size-8 items-center justify-center rounded-full bg-orange-500 pl-0.5 hover:cursor-pointer hover:bg-orange-400 disabled:cursor-not-allowed disabled:bg-neutral-400"
-          // disabled={loading}
+          disabled={finish}
         >
           <PaperAirplaneIcon className="size-6" />
         </button>

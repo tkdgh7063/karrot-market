@@ -4,7 +4,7 @@ import { getLoggedInUserId } from "@/lib/session";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
-import { deleteStream } from "../add/actions";
+import { EndStream } from "../add/actions";
 
 async function getStream(streamId: string) {
   const stream = await db.liveStream.findUnique({
@@ -104,10 +104,10 @@ export default async function StreamDetailPage({
               <span className="font-semibold">Secret Key</span>
               <span className="text-sm break-all">{stream.streamKey}</span>
             </div>
-            <form action={deleteStream} className="flex justify-center">
+            <form action={EndStream} className="flex justify-center">
               <input type="hidden" name="streamId" value={streamId} />
-              <button className="h-10 self-center rounded-lg bg-red-500 px-3 text-center font-semibold text-white transition-colors hover:bg-red-400 disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:text-neutral-300 disabled:hover:bg-neutral-400">
-                Delete Stream
+              <button className="h-10 self-center rounded-lg bg-red-500 px-3 text-center font-semibold text-white transition-colors hover:cursor-pointer hover:bg-red-400 disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:text-neutral-300 disabled:hover:bg-neutral-400">
+                End Stream
               </button>
             </form>
           </div>

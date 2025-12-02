@@ -4,6 +4,7 @@ import { createLiveInput } from "@/app/api/stream/[accountId]/live_inputs/route"
 import { ERROR_MESSAGES, STREAM_TITLE_MAX_LENGTH } from "@/lib/constants";
 import db from "@/lib/db";
 import { getLoggedInUserId } from "@/lib/session";
+import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import z from "zod";
 
@@ -67,12 +68,32 @@ export async function startStream(_: any, formData: FormData) {
   return redirect(`/streams/${stream.streamId}`);
 }
 
-export async function deleteStream(formData: FormData) {
+export async function EndStream(formData: FormData) {
   const streamId = formData.get("streamId") as string;
   if (!streamId || typeof streamId !== "string") return;
 
   const results = streamIdSchema.safeParse(streamId);
   if (!results.success) return;
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!,
+  );
+
+  const channel = supabase.channel(`live-${streamId}`);
+  channel.send({
+    type: "broadcast",
+    event: "end",
+    payload: {
+      id: Date.now(),
+      payload: "This livestream has finished. Thanks for watching!",
+      created_at: new Date(),
+      userId: 0,
+      user: {
+        username: "SYSTEM",
+      },
+    },
+  });
 
   await db.liveStream.delete({
     where: {
