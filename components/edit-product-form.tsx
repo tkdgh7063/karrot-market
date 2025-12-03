@@ -1,13 +1,15 @@
 "use client";
 
-import { updateProduct } from "@/app/(products)/products/[id]/edit/actions";
+import {
+  deleteProduct,
+  updateProduct,
+} from "@/app/(products)/products/[id]/edit/actions";
 import { Product } from "@/app/(products)/products/[id]/edit/page";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
 import Button from "./button";
 import Input from "./input";
-import { deleteProduct } from "@/app/(products)/products/[id]/edit/actions";
 
 export default function EditProductForm({ product }: { product: Product }) {
   if (!product) return;
@@ -27,6 +29,11 @@ export default function EditProductForm({ product }: { product: Product }) {
     const url = URL.createObjectURL(file);
     setPreview(url);
   };
+
+  if (state?.fieldErrors.photo && preview) {
+    URL.revokeObjectURL(preview);
+    setPreview(null);
+  }
 
   return (
     <>
