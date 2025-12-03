@@ -73,7 +73,7 @@ export default function EditProductForm({ product }: { product: Product }) {
         <label
           htmlFor="photo"
           style={{ backgroundImage: `url(${preview})` }}
-          className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-400 bg-cover bg-center text-neutral-400"
+          className={`flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-400 bg-cover bg-center text-neutral-400 ${preview ? "border-none" : null}`}
         >
           {preview ? null : (
             <>
