@@ -4,7 +4,7 @@ import Button from "@/components/button";
 import Input from "@/components/input";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { uploadNewProduct } from "./actions";
 
 export default function NewProduct() {
@@ -23,6 +23,14 @@ export default function NewProduct() {
     const url = URL.createObjectURL(file);
     setPreview(url);
   };
+
+  useEffect(() => {
+    if (state?.fieldErrors && preview) {
+      URL.revokeObjectURL(preview);
+      setPreview(null);
+    }
+  }, [state]);
+
   return (
     <form action={action} className="flex flex-col gap-5 p-5">
       <h1 className="text-2xl">New Product</h1>
