@@ -190,7 +190,11 @@ export default async function PostDetailPage({
           <UserIcon className="size-7" />
         )}
         <div>
-          <span className="text-md font-semibold">{post.user.username}</span>
+          <Link href={`/profile/${post.userId}`}>
+            <span className="text-md font-semibold text-white">
+              {post.user.username}
+            </span>
+          </Link>
           <div>
             <FormattedDate
               date={post.created_at}
