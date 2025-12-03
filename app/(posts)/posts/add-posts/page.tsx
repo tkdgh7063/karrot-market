@@ -14,7 +14,7 @@ export default function AddPostPage() {
   const [state, action] = useActionState(uploadNewPost, null);
   return (
     <form action={action} className="flex flex-col gap-5 p-5">
-      <h1>New Post</h1>
+      <h1 className="text-2xl">New Post</h1>
       <Input
         name="title"
         placeholder="Title"
