@@ -42,10 +42,13 @@ export default async function Life() {
   const posts = await getPosts();
   if (posts.length === 0) {
     return (
-      <div className="flex h-[100vh] flex-col items-center justify-center gap-2 *:text-xl">
-        <span>Hmm… nothing’s cooking 🍳</span>
-        <span>Add a post and spice things up!</span>
-      </div>
+      <>
+        <div className="flex h-[100vh] flex-col items-center justify-center gap-2 *:text-xl">
+          <span>Hmm… nothing’s cooking 🍳</span>
+          <span>Add a post and spice things up!</span>
+        </div>
+        <AddIconBtn href={`/posts/add-posts`} />
+      </>
     );
   }
 
