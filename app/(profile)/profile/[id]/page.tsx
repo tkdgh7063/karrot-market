@@ -1,6 +1,7 @@
 import UserProfileCard from "@/components/user-profile-card";
 import db from "@/lib/db";
-import { notFound } from "next/navigation";
+import { getLoggedInUserId } from "@/lib/session";
+import { notFound, redirect } from "next/navigation";
 
 async function getUser(userId: number) {
   const user = await db.user.findUnique({
@@ -34,6 +35,9 @@ export default async function UserProfile({
 }) {
   const id = Number((await params).id);
   if (isNaN(id)) return notFound();
+
+  const loggedInUserId = await getLoggedInUserId();
+  if (id === loggedInUserId) return redirect("/profile");
 
   const user = await getUser(id);
   if (!user) return notFound();
