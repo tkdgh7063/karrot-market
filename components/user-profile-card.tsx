@@ -1,11 +1,11 @@
 import { UserProps } from "@/app/(tabs)/profile/page";
-import { logoutUser } from "@/lib/session";
+import { getLoggedInUserId, logoutUser } from "@/lib/session";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-export default function UserProfileCard({ user }: { user: UserProps }) {
+export default async function UserProfileCard({ user }: { user: UserProps }) {
   const logout = async () => {
     "use server";
     await logoutUser();
@@ -13,6 +13,9 @@ export default function UserProfileCard({ user }: { user: UserProps }) {
   };
 
   if (!user) return notFound();
+
+  const userId = await getLoggedInUserId();
+  if (!userId) return redirect("/");
 
   return (
     <div className="flex h-[100vh] flex-col gap-5 bg-red-400 text-white">
@@ -30,9 +33,11 @@ export default function UserProfileCard({ user }: { user: UserProps }) {
         )}
         <div>{user.username}</div>
         <div>{user.email ? user.email : "No Email"}</div>
-        <form action={logout}>
-          <button className="bg-orange-400 px-3 py-1">Logout</button>
-        </form>
+        {userId === user.id ? (
+          <form action={logout}>
+            <button className="bg-orange-400 px-3 py-1">Logout</button>
+          </form>
+        ) : null}
       </div>
       <div className="grid grid-flow-row grid-cols-3">
         {user.products.map((product) => (

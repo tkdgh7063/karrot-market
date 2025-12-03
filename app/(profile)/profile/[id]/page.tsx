@@ -1,7 +1,5 @@
 import UserProfileCard from "@/components/user-profile-card";
 import db from "@/lib/db";
-import { getLoggedInUserId } from "@/lib/session";
-import { PromiseReturnType } from "@prisma/client";
 import { notFound } from "next/navigation";
 
 async function getUser(userId: number) {
@@ -29,12 +27,15 @@ async function getUser(userId: number) {
   return user;
 }
 
-export type UserProps = PromiseReturnType<typeof getUser>;
+export default async function UserProfile({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = Number((await params).id);
+  if (isNaN(id)) return notFound();
 
-export default async function Profile() {
-  const loggedInUserId = await getLoggedInUserId();
-
-  const user = await getUser(loggedInUserId);
+  const user = await getUser(id);
   if (!user) return notFound();
 
   return <UserProfileCard user={user} />;
