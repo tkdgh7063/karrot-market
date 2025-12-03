@@ -65,6 +65,7 @@ export default function ProductDetail({
       redirect(`/chats/${room.id}`);
     }
   };
+
   return (
     <div>
       <div className="relative aspect-square">
@@ -89,7 +90,11 @@ export default function ProductDetail({
           )}
         </div>
         <div>
-          <span className="text-semibold text-md">{product.user.username}</span>
+          <Link href={`/profile/${product.userId}`} className="text-white">
+            <span className="text-semibold text-md">
+              {product.user.username}
+            </span>
+          </Link>
           <div>
             <FormattedDate
               date={product.created_at}
