@@ -1,9 +1,9 @@
 "use server";
 
 import {
+  ERROR_MESSAGES,
   PRODUCT_DESCRIPTION_MAX_LENGTH,
   PRODUCT_DESCRIPTION_MIN_LENGTH,
-  ERROR_MESSAGES,
   TITLE_MAX_LENGTH,
   TITLE_MIN_LENGTH,
 } from "@/lib/constants";
@@ -80,21 +80,58 @@ export async function updateProduct(_: any, formData: FormData) {
   if (!results.success) {
     return z.flattenError(results.error);
   } else {
-    const updatedProduct = await db.product.update({
-      where: { id: Number(formData.get("id")) },
-      data: {
-        title: results.data.title,
-        price: results.data.price,
-        description: results.data.description,
-        photo: results.data.photo,
-        edited: true,
+    const prevProduct = await db.product.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        title: true,
+        price: true,
+        description: true,
+        photo: true,
       },
     });
 
-    revalidatePath("/products");
-    revalidatePath(`/products/${updatedProduct.id}`);
+    let edited = false;
+    if (prevProduct) {
+      const fields: (keyof typeof prevProduct)[] = [
+        "title",
+        "price",
+        "description",
+        "photo",
+      ];
 
-    return redirect(`/products/${updatedProduct.id}`);
+      for (const field of fields) {
+        if (prevProduct[field] !== results.data[field]) {
+          console.log(field);
+          edited = true;
+          break;
+        }
+      }
+    }
+
+    if (edited) {
+      const updatedProduct = await db.product.update({
+        where: { id },
+        data: {
+          title: results.data.title,
+          price: results.data.price,
+          description: results.data.description,
+          photo: results.data.photo,
+          edited,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (updatedProduct) {
+        revalidatePath("/products");
+        revalidatePath(`/products/${id}`);
+      }
+    }
+
+    return redirect(`/products/${id}`);
   }
 }
 

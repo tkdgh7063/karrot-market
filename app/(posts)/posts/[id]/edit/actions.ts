@@ -42,24 +42,50 @@ export async function updatePost(_: any, formData: FormData) {
   if (!results.success) {
     return z.flattenError(results.error);
   } else {
-    const updatedPost = await db.post.update({
+    const prevPost = await db.post.findUnique({
       where: {
         id,
       },
-      data: {
-        title: results.data.title,
-        description: results.data.description,
-        edited: true,
-      },
       select: {
-        id: true,
+        title: true,
+        description: true,
       },
     });
 
-    // revalidatePath("/life");
-    revalidateTag(`post-detail-${updatedPost.id}`);
+    let edited = false;
+    if (prevPost) {
+      const fields: (keyof typeof prevPost)[] = ["title", "description"];
 
-    return redirect(`/posts/${updatedPost.id}`);
+      for (const field of fields) {
+        if (prevPost[field] !== results.data[field]) {
+          edited = true;
+          break;
+        }
+      }
+    }
+
+    if (edited) {
+      const updatedPost = await db.post.update({
+        where: {
+          id,
+        },
+        data: {
+          title: results.data.title,
+          description: results.data.description,
+          edited,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (updatedPost) {
+        // revalidatePath("/life");
+        revalidateTag(`post-detail-${id}`);
+      }
+    }
+
+    return redirect(`/posts/${id}`);
   }
 }
 
