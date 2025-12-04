@@ -15,6 +15,9 @@ async function getUser(userId: number) {
           photo: true,
           title: true,
         },
+        orderBy: {
+          created_at: "desc",
+        },
       },
       email: true,
       avatar: true,

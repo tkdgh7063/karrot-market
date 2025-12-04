@@ -46,7 +46,7 @@ export default async function UserProfileCard({ user }: { user: UserProps }) {
           <Link
             key={product.id}
             href={`/products/${product.id}`}
-            className="relative size-40"
+            className="relative aspect-square overflow-hidden"
           >
             <Image src={product.photo} alt={product.title} fill />
           </Link>
