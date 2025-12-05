@@ -5,6 +5,7 @@ import db from "@/lib/db";
 import { loginUser } from "@/lib/session";
 import crypto from "crypto";
 import { redirect } from "next/navigation";
+import twilio from "twilio";
 import {
   names,
   NumberDictionary,
@@ -12,7 +13,6 @@ import {
 } from "unique-names-generator";
 import validator from "validator";
 import z from "zod";
-import twilio from "twilio";
 
 const phoneSchema = z
   .string()
@@ -85,34 +85,36 @@ export default async function smsLogin(
         error: z.flattenError(result.error),
       };
     } else {
-      // delete previous code
-      await db.sMSCode.deleteMany({
-        where: {
-          user: {
-            phone: result.data,
+      db.$transaction(async (tx) => {
+        // delete previous code
+        await db.sMSCode.deleteMany({
+          where: {
+            user: {
+              phone: result.data,
+            },
           },
-        },
-      });
+        });
 
-      // create code
-      const code = await createCode(result.data);
-      await db.sMSCode.create({
-        data: {
-          code,
-          phone: result.data,
-          expires_at: new Date(Date.now() + 3 * 60 * 1000),
-          user: {
-            connectOrCreate: {
-              where: {
-                phone: result.data,
-              },
-              create: {
-                username: generateRandomName(),
-                phone: result.data,
+        // create code
+        const code = await createCode(result.data);
+        await db.sMSCode.create({
+          data: {
+            code,
+            phone: result.data,
+            expires_at: new Date(Date.now() + 3 * 60 * 1000),
+            user: {
+              connectOrCreate: {
+                where: {
+                  phone: result.data,
+                },
+                create: {
+                  username: generateRandomName(),
+                  phone: result.data,
+                },
               },
             },
           },
-        },
+        });
       });
 
       // send the code to the user using twilio
