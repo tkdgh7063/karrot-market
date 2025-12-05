@@ -2,6 +2,12 @@
 
 @plugin "@tailwindcss/forms";
 
+@theme {
+  --font-roboto: var(--font-roboto);
+  --font-rubik: var(--font-rubik);
+  --font-metallica: var(--font-metallica);
+}
+
 @layer base {
   a {
     @apply text-orange-400;
