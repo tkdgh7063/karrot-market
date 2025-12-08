@@ -34,11 +34,19 @@ export default async function UserProfileCard({ user }: { user: UserProps }) {
         <div>{user.username}</div>
         <div>{user.email ? user.email : "No Email"}</div>
         {userId === user.id ? (
-          <form action={logout}>
-            <button className="rounded-md bg-orange-500 px-3 py-1 hover:cursor-pointer hover:bg-orange-400">
-              Logout
-            </button>
-          </form>
+          <>
+            <Link
+              href="/profile/edit"
+              className="rounded-md bg-orange-500 px-3 py-1 text-white hover:bg-orange-400"
+            >
+              Edit Profile
+            </Link>
+            <form action={logout}>
+              <button className="rounded-md bg-orange-500 px-3 py-1 hover:cursor-pointer hover:bg-orange-400">
+                Logout
+              </button>
+            </form>
+          </>
         ) : null}
       </div>
       <div className="grid grid-flow-row grid-cols-3">
