@@ -44,6 +44,7 @@ export const ERROR_MESSAGES = {
   USERNAME_CANNOT_CONTAIN_ADMIN: "Username cannot contain 'admin'",
   USERNAME_TAKEN: "This username is already taken",
 
+  CODE_REQUIRED: "Code is required.",
   CODE_INVALID: "Code does not exist",
   CODE_EXPIRED: "Code is expired",
 

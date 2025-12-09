@@ -10,7 +10,7 @@ import {
   USERNAME_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import { loginUser } from "@/lib/session";
+import { getPendingEmail, loginUser, savePendingEmail } from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -107,38 +107,200 @@ const formSchema = z
     }
   });
 
-export async function createAccount(_: any, formData: FormData) {
+async function isCodeExists(code: string) {
+  const isExists = await db.emailCode.findFirst({
+    where: {
+      code,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return Boolean(isExists);
+}
+
+function generateRandomCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const length = 6;
+
+  let result = "";
+  const array = new Uint32Array(length);
+  crypto.getRandomValues(array);
+
+  for (let i = 0; i < length; i++) {
+    result += chars[array[i] % chars.length];
+  }
+
+  return result;
+}
+
+async function createCode(email: string) {
+  let code: string;
+  while (true) {
+    code = generateRandomCode();
+    const exists = await db.emailCode.findUnique({
+      where: {
+        code_email: {
+          code,
+          email,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!exists) break;
+  }
+
+  return code;
+}
+
+const codeSchema = z
+  .string()
+  .nonempty(ERROR_MESSAGES.CODE_REQUIRED)
+  .min(6, ERROR_MESSAGES.CODE_INVALID)
+  .max(6, ERROR_MESSAGES.CODE_INVALID)
+  .refine(isCodeExists, ERROR_MESSAGES.CODE_INVALID);
+
+type ActionState =
+  | { code: true; error?: { formErrors: string[] } }
+  | { code: false; error?: { fieldErrors: string[] } };
+
+export async function createAccount(prevState: any, formData: FormData) {
   const __ = typeof PASSWORD_REGEXP; // assigned to keep the import
-  const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirm_password: formData.get("confirm_password"),
-    username: formData.get("username"),
-  };
 
-  const result = await formSchema.spa(data); // spa stands for safeParseAsync
-  if (!result.success) {
-    return z.flattenError(result.error);
+  if (!prevState.code) {
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirm_password: formData.get("confirm_password"),
+      username: formData.get("username"),
+    };
+
+    const result = await formSchema.spa(data); // spa stands for safeParseAsync
+    if (!result.success) {
+      return { code: false, error: z.flattenError(result.error) };
+    } else {
+      // hash password
+      const hasedPassword = await bcrypt.hash(
+        result.data.password,
+        HASH_ROUNDS,
+      );
+
+      const transaction = await db.$transaction(async (tx) => {
+        // save the user to db
+        const user = await tx.user.create({
+          data: {
+            email: result.data.email,
+            username: result.data.username,
+            password: hasedPassword,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        // create email verification code
+        const code = await tx.emailCode.create({
+          data: {
+            email: result.data.email,
+            code: await createCode(result.data.email),
+            expires_at: new Date(Date.now() + 5 * 60 * 1000),
+            userId: user.id,
+          },
+          select: {
+            code: true,
+          },
+        });
+        console.log(code.code);
+
+        await savePendingEmail(result.data.email);
+
+        return code;
+      });
+
+      if (transaction) return { code: true };
+      else
+        return {
+          code: false,
+          error: {
+            formErrors: {
+              username: ["Something went wrong. Try again."],
+            },
+          },
+        };
+    }
   } else {
-    // hash password
-    const hasedPassword = await bcrypt.hash(result.data.password, HASH_ROUNDS);
+    // email verification
+    const code = formData.get("code");
 
-    // save the user to db
-    const user = await db.user.create({
+    const result = await codeSchema.spa(code);
+    if (!result.success) {
+      return {
+        code: true,
+        error: z.flattenError(result.error),
+      };
+    }
+
+    const email = await getPendingEmail();
+    if (!email)
+      return {
+        code: false,
+        error: { formErrors: { username: ["Something went wrong."] } },
+      };
+    const codeRecord = await db.emailCode.findFirst({
+      where: {
+        email,
+        code: result.data,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: 1,
+      select: {
+        code: true,
+        expires_at: true,
+        userId: true,
+      },
+    });
+
+    if (!codeRecord) {
+      return {
+        code: true,
+        error: {
+          formErrors: [ERROR_MESSAGES.CODE_INVALID],
+        },
+      };
+    } else if (codeRecord.expires_at <= new Date()) {
+      return {
+        code: true,
+        error: {
+          formErrors: [ERROR_MESSAGES.CODE_EXPIRED],
+        },
+      };
+    }
+
+    await db.emailCode.deleteMany({
+      where: {
+        email,
+      },
+    });
+
+    const user = await db.user.update({
+      where: {
+        email,
+      },
       data: {
-        email: result.data.email,
-        username: result.data.username,
-        password: hasedPassword,
+        email_verified: true,
       },
       select: {
         id: true,
       },
     });
 
-    // log the user in
     await loginUser(user.id);
 
-    // redirect user
     return redirect("/profile");
   }
 }
