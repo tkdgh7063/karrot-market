@@ -10,6 +10,7 @@ import {
   USERNAME_MIN_LENGTH,
 } from "@/lib/constants";
 import db from "@/lib/db";
+import { sendVerificationEmail } from "@/lib/gmail";
 import { getPendingEmail, loginUser, savePendingEmail } from "@/lib/session";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
@@ -214,6 +215,9 @@ export async function createAccount(prevState: any, formData: FormData) {
           },
         });
         console.log(code.code);
+
+        // email the user
+        // await sendVerificationEmail(result.data.email, code.code);
 
         await savePendingEmail(result.data.email);
 
